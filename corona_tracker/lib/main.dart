@@ -16,6 +16,10 @@ class MyApp extends StatelessWidget {
         primaryColor:backgroundColor
     ),
     home: SplashScreen(),
+      routes: <String,WidgetBuilder>{
+          '/singup':(BuildContext context)=>Home(),
+           '/home':(BuildContext context)=>Home(),
+      },
     );
   }
 }

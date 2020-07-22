@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:corona_tracker/views/Home.dart';
+import 'package:corona_tracker/views/signup.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context) => new Home() ));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context) => new Signup() ));
   }
 
   @override
