@@ -149,6 +149,7 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+<<<<<<< HEAD
   geolocator:
     dependency: "direct main"
     description:
@@ -163,6 +164,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
+=======
+  grouped_buttons:
+    dependency: "direct main"
+    description:
+      name: grouped_buttons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
+>>>>>>> hasnae-dev
   http:
     dependency: transitive
     description:
