@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:password/password.dart';
+import 'package:corona_tracker/views/Home.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
 
@@ -9,8 +12,52 @@ class Login extends StatefulWidget {
   _State createState() => _State();
 }
 
+
 class _State extends State<Login> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _pass = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  Future<void> validate(BuildContext context) async {
+   int count = 0;
+   if (_formKey.currentState.validate()) {
+    var data = Firestore.instance
+        .collection('users')
+        .getDocuments().then((querySnapshot) {
+     querySnapshot.documents.forEach((result) {
+      if (result.data['email'] == _email.text &&
+          result.data['password'] == Password.hash(_pass.text, new PBKDF2())
+              .toString()) {
+       count++;
+      }
+     });
+     if (count == 0) {
+      return showDialog<void>(
+       context: context,
+       builder: (BuildContext context) {
+        return AlertDialog(
+         title: Text('Warning'),
+         content: const Text('Verifie your email or password'),
+         actions: <Widget>[
+          FlatButton(
+           child: Text('Ok'),
+           onPressed: () {
+            Navigator.of(context).pop();
+           },
+          ),
+         ],
+        );
+       },
+      );
+     }
+     else {
+      Navigator.push(
+       context,
+       MaterialPageRoute(builder: (context) => Home()),
+      );
+     }
+    });
+   }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +74,6 @@ class _State extends State<Login> {
     child:Padding(
     padding: const EdgeInsets.only(top:20),
     child: SafeArea(
-    key: _formKey,
     child:ListView(
 
     children: <Widget>[
@@ -66,6 +112,7 @@ class _State extends State<Login> {
        ),
      ),
     Form(
+     key: _formKey,
     child:Padding(
     padding: const EdgeInsets.only(top:70),
 
@@ -75,13 +122,10 @@ class _State extends State<Login> {
 
     TextFormField(
     style: TextStyle(color: const Color(0xFF272343)),
-    validator: (value) {
-    if (value.isEmpty) {
-    return 'Please enter some text';
-    }
-    return null;
-    },
-    decoration: new InputDecoration(
+    controller: _email,
+     validator: (value)=>value.isEmpty?"Email can\'t be empty":null,
+
+     decoration: new InputDecoration(
     labelText: 'Enter your Email',
     enabledBorder: UnderlineInputBorder(
     borderSide:
@@ -91,18 +135,14 @@ class _State extends State<Login> {
     borderSide:
     BorderSide(color: Colors.amber),
     ),
-    border: UnderlineInputBorder()),
+    border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     keyboardType: TextInputType.emailAddress,
     ),
     TextFormField(
     style: TextStyle(color: const Color(0xFF272343)),
-    validator: (value) {
-    if (value.isEmpty) {
-    return 'Please enter some text';
-    }
-    return null;
-    },
-    obscureText: true,
+    controller: _pass,
+     validator: (value)=>value.isEmpty?"Password can\'t be empty":null,
+     obscureText: true,
     decoration: new InputDecoration(
     labelText: 'Enter your Password',
     enabledBorder: UnderlineInputBorder(
@@ -121,14 +161,7 @@ class _State extends State<Login> {
     child: RaisedButton(
     onPressed: () {
     // Validate returns true if the form is valid, otherwise false.
-    if (_formKey.currentState.validate()) {
-    // If the form is valid, display a snackbar. In the real world,
-    // you'd often call a server or save the information in a database.
-
-    Scaffold
-        .of(context)
-        .showSnackBar(SnackBar(content: Text('Processing Data')));
-    }
+    validate(context);
     },
     textColor: Colors.white,
     padding: const EdgeInsets.all(0.0),

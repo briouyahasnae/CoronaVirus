@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/splashScreen.dart';
-void main() {
+import 'package:country_codes/country_codes.dart';
+
+void main() async{
+  /*WidgetsFlutterBinding.ensureInitialized();
+  await CountryCodes.init();*/
   runApp(MyApp());
 }
 
