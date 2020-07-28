@@ -50,12 +50,13 @@ class _SignupState extends State<Signup>  {
       });*/
       var data = Firestore.instance
           .collection('users')
-          .getDocuments().then((querySnapshot) {
+          .getDocuments().then((querySnapshot)
+      {
         querySnapshot.documents.forEach((result) {
-          if (result.data['email'] == _email.text) {
-            count++;
-          }
-        });
+      if (result.data['email'] == _email.text) {
+      count++;
+      }
+      });
             if(count==0) {
               firestoreInstance.collection("users").add(
                   {

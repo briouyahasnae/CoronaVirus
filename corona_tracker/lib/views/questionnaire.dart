@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Questionnaire extends StatefulWidget {
@@ -8,47 +9,51 @@ class Questionnaire extends StatefulWidget {
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
 
-
+  final TextEditingController _age = TextEditingController();
+  final TextEditingController _height= TextEditingController();
+  final TextEditingController _weight = TextEditingController();
   int _currentStep = 0;
-  int selectedRadio;
-int selectedRadio1;
-int selectedRadio2;
-  int selectedRadio3;
-  int selectedRadio4;
+  String selectedRadio;
+String selectedRadio1;
+  String selectedRadio2;
+  String selectedRadio3;
+  String selectedRadio4;
+  bool _autoValidate = false;
+  final firestoreInstance = Firestore.instance;
   @override
   void initState() {
     super.initState();
-    selectedRadio = 0;
-    selectedRadio1 = 0;
-    selectedRadio2 = 0;
-   selectedRadio3=0;
-   selectedRadio4=0;
+    selectedRadio = null;
+    selectedRadio1 = null;
+    selectedRadio2 = null;
+   selectedRadio3=null;
+   selectedRadio4=null;
   }
 
 // Changes the selected value on 'onChanged' click on each radio button
- void setSelectedRadio(int val) {
+ void setSelectedRadio(String val) {
     setState(() {
       selectedRadio = val;
     });
   }
-  void setSelectedRadio1(int val) {
+  void setSelectedRadio1(String val) {
     setState(() {
       selectedRadio1 = val;
     });
 
 
   }
-  void setSelectedRadio2(int val) {
+  void setSelectedRadio2(String val) {
     setState(() {
       selectedRadio2 = val;
     });
   }
-  void setSelectedRadio3(int val) {
+  void setSelectedRadio3(String val) {
     setState(() {
       selectedRadio3 = val;
     });
   }
-  void setSelectedRadio4(int val) {
+  void setSelectedRadio4(String val) {
     setState(() {
       selectedRadio4 = val;
     });
@@ -75,6 +80,7 @@ int selectedRadio2;
             }
             else{
               //Logic to check if everything is completed
+              Response(context);
               validateAnswers(context);
             }
           });
@@ -96,22 +102,27 @@ int selectedRadio2;
   }
 
   List<Step> _mySteps() {
+    autovalidate: _autoValidate;
     List<Step> _steps = [
       Step(
         title: Text('Personal informations'),
+
         content: Column(
           children: <Widget>[
             TextFormField(
               decoration: InputDecoration(labelText: 'Age'),
               keyboardType: TextInputType.number,
+             controller: _age,
             ),
             TextFormField(
               decoration: InputDecoration(labelText: 'Height'),
               keyboardType: TextInputType.number,
+              controller: _height,
             ),
             TextFormField(
               decoration: InputDecoration(labelText: 'Weight'),
               keyboardType: TextInputType.number,
+              controller: _weight,
             ),
           ],
         ),
@@ -134,20 +145,20 @@ int selectedRadio2;
                     ),
 
                     Radio(
-                      value: 1,
+                      value: "yes",
                       groupValue: selectedRadio1,
                       activeColor: Colors.green,
-                      onChanged: (int val1) {
+                      onChanged: (val1) {
                         print("Radio $val1");
                         setSelectedRadio1(val1);
                       },
                     ),
                     Text('Yes'),
                     Radio(
-                      value: 2,
+                      value: "no",
                       groupValue: selectedRadio1,
                       activeColor: Colors.blue,
-                      onChanged: (int val1) {
+                      onChanged: (val1) {
                         print("Radio $val1");
                         setSelectedRadio1(val1);
                       },
@@ -165,20 +176,20 @@ int selectedRadio2;
                     ),
 
                     Radio(
-                      value: 1,
+                      value: "yes",
                       groupValue: selectedRadio,
                       activeColor: Colors.green,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio(val);
                       },
                     ),
                     Text('Yes'),
                     Radio(
-                      value: 2,
+                      value:"no",
                       groupValue: selectedRadio,
                       activeColor: Colors.blue,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio(val);
                       },
@@ -197,20 +208,20 @@ int selectedRadio2;
                     ),
 
                     Radio(
-                      value: 1,
+                      value: "yes",
                       groupValue: selectedRadio2,
                       activeColor: Colors.green,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio2(val);
                       },
                     ),
                     Text('Yes'),
                     Radio(
-                      value: 2,
+                      value:"no",
                       groupValue: selectedRadio2,
                       activeColor: Colors.blue,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio2(val);
                       },
@@ -228,20 +239,20 @@ int selectedRadio2;
                     ),
 
                     Radio(
-                      value: 1,
+                      value: "yes",
                       groupValue: selectedRadio3,
                       activeColor: Colors.green,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio3(val);
                       },
                     ),
                     Text('Yes'),
                     Radio(
-                      value: 2,
+                      value: "no",
                       groupValue: selectedRadio3,
                       activeColor: Colors.blue,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio3(val);
                       },
@@ -258,20 +269,20 @@ int selectedRadio2;
                     ),
 
                     Radio(
-                      value: 1,
+                      value: "yes",
                       groupValue: selectedRadio4,
                       activeColor: Colors.green,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio4(val);
                       },
                     ),
                     Text('Yes'),
                     Radio(
-                      value: 2,
+                      value: "no",
                       groupValue: selectedRadio4,
                       activeColor: Colors.blue,
-                      onChanged: (int val) {
+                      onChanged: (val) {
                         print("Radio $val");
                         setSelectedRadio4(val);
                       },
@@ -287,6 +298,54 @@ int selectedRadio2;
 
     return _steps;
   }
+  int CountSelect(BuildContext context){
+    int count=0;
+    for(int i=0;i<6;i++){
+
+        }
+  }
+Future<void> Response(BuildContext context){
+  var data = Firestore.instance
+      .collection('questionnaire')
+      .getDocuments().then((querySnapshot)
+  {
+    firestoreInstance.collection("questionnaire").add(
+        {
+          "Age":_age.text,
+          "Height":_height.text,
+          "Weight":_weight.text,
+          "R1": selectedRadio,
+          "R2": selectedRadio1,
+          "R3":selectedRadio2,
+          "R4": selectedRadio3,
+          "R5":selectedRadio4,
+        }
+    ).then((_) {
+      return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Done'),
+            content: const Text('Welcome to corona tracker'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Questionnaire()),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+
+
+  });
+}
   Future<void> validateAnswers(BuildContext context) {
     if (selectedRadio == 1 && selectedRadio1 == 1 &&
         selectedRadio2 == 1 && selectedRadio3 == 1 &&
