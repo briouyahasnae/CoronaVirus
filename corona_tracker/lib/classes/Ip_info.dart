@@ -1,5 +1,3 @@
-import 'package:http/http.dart' as http;
-
 class IP_info{
   final String IP;
   final String city;
