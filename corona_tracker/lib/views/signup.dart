@@ -4,10 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/login.dart';
-import 'package:country_provider/country_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:corona_tracker/classes/Ip_info.dart';
 
 final backgroundColor = const Color(0xFFf4f4f6);
