@@ -5,8 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/DestinationView.dart';
+import 'package:flutter_session/flutter_session.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
+var session = FlutterSession();
 
 class Login extends StatefulWidget {
   @override
@@ -18,6 +20,9 @@ class _State extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _email = TextEditingController();
+  Future<void> setSession(BuildContext context) async{
+   await session.set("email", _email.text);
+  }
   Future<void> validate(BuildContext context) async {
    int count = 0;
    if (_formKey.currentState.validate()) {
@@ -51,6 +56,7 @@ class _State extends State<Login> {
       );
      }
      else {
+setSession(context);
       Navigator.push(
        context,
        MaterialPageRoute(builder: (context) => DestinationView()),

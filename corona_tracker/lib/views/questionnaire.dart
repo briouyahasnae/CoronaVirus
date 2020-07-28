@@ -1,9 +1,10 @@
-<<<<<<< HEAD
+
 import 'package:corona_tracker/classes/Ip_info.dart';
-=======
+
 import 'package:cloud_firestore/cloud_firestore.dart';
->>>>>>> hasnae-dev
+
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 
 class Questionnaire extends StatefulWidget {
   @override
@@ -315,8 +316,12 @@ String selectedRadio1;
 
         }
   }
-Future<void> Response(BuildContext context){
-  var data = Firestore.instance
+Future<void> Response(BuildContext context) async{
+    dynamic email=await FlutterSession().get("email");
+    print(email);
+
+    var data = Firestore.instance
+
       .collection('questionnaire')
       .getDocuments().then((querySnapshot)
   {
@@ -330,6 +335,7 @@ Future<void> Response(BuildContext context){
           "R3":selectedRadio2,
           "R4": selectedRadio3,
           "R5":selectedRadio4,
+          "email":email
         }
     ).then((_) {
       return showDialog<void>(
@@ -356,6 +362,11 @@ Future<void> Response(BuildContext context){
 
 
   });
+    var data1 = Firestore.instance
+
+        .collection('users')
+        .document(email).updateData("Response":true);
+
 }
   Future<void> validateAnswers(BuildContext context) {
     if (selectedRadio == 1 && selectedRadio1 == 1 &&
