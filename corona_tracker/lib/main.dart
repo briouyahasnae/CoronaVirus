@@ -4,7 +4,6 @@ import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   /*await CountryCodes.init();*/

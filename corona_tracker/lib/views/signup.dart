@@ -10,25 +10,25 @@ import 'package:password/password.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:corona_tracker/classes/Ip_info.dart';
 
-final backgroundColor=const Color(0xFFf4f4f6);
+final backgroundColor = const Color(0xFFf4f4f6);
+
 class Signup extends StatefulWidget {
   @override
   _SignupState createState() => _SignupState();
 }
 
-class _SignupState extends State<Signup>  {
+class _SignupState extends State<Signup> {
   bool _isLoading = false;
   IP_info ip_info;
 
   @override
   void initState() {
-    _isLoading=true;
+    _isLoading = true;
     _getPublicIP();
   }
 
   _getPublicIP() async {
     try {
-
       const url = 'http://ip-api.com/json';
 
       final response = await http.get(url);
@@ -39,25 +39,22 @@ class _SignupState extends State<Signup>  {
         setState(() {
           _isLoading = false;
         });
-      }
-      else {
+      } else {
         // The request failed with a non-200 code
         print(response.statusCode);
         print(response.body);
       }
-
-
-
     } catch (e) {
       print(e);
     }
   }
+
   var countries;
   final firestoreInstance = Firestore.instance;
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _username= TextEditingController();
+  final TextEditingController _username = TextEditingController();
   /*String _value;
   Future<List<Country>> getCountries() async {
     return countries= await  CountryProvider.getAllCountries();
@@ -65,212 +62,184 @@ class _SignupState extends State<Signup>  {
   }*/
   Future<void> validate(BuildContext context) async {
     if (formKey.currentState.validate()) {
-      int count=0;
+      int count = 0;
 
       var data = Firestore.instance
           .collection('users')
-          // ignore: missing_return
-          .getDocuments().then((querySnapshot) {
+          .getDocuments()
+          .then((querySnapshot) {
         querySnapshot.documents.forEach((result) {
           if (result.data['email'] == _email.text) {
             count++;
           }
         });
-            if(count==0) {
-              firestoreInstance.collection("users").add(
-                  {
-                    "username": _username.text,
-                    "email": _email.text,
-                    "password": Password.hash(_pass.text, new PBKDF2())
-                        .toString(),
-                    "country": ip_info.country,
-                    "code":ip_info.country_code
-                  }
-              ).then((_) {
-                return showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Done'),
-                      content: const Text('Welcome to corona tracker'),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text('Ok'),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Login()),
-                            );
-                          },
-                        ),
-                      ],
-                    );
-                  },
+        if (count == 0) {
+          firestoreInstance.collection("users").add({
+            "username": _username.text,
+            "email": _email.text,
+            "password": Password.hash(_pass.text, new PBKDF2()).toString(),
+            "country": ip_info.country,
+            "code": ip_info.country_code
+          }).then((_) {
+            return showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Done'),
+                  content: const Text('Welcome to corona tracker'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Ok'),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      },
+                    ),
+                  ],
                 );
-                    });
-
-            }
-          else {
-              return showDialog<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Account exists'),
-                    content: const Text('There is an account with this email ,try to login'),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Ok'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
+              },
+            );
+          });
+        } else {
+          return showDialog<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Account exists'),
+                content: const Text(
+                    'There is an account with this email ,try to login'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
               );
-
-      }
-        });
-
-    }
-      else{
-            return Text("form is invalid");
-            }
-       return null;
+            },
+          );
         }
-
+      });
+    } else {
+      return Text("form is invalid");
+    }
+    return null;
+  }
 
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Container(
-      color: backgroundColor,
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-          child:Padding(
-              padding: const EdgeInsets.only(top:20),
-         child: SafeArea(
-        child:Center(
-        child:ListView(
-
-          children: <Widget>[
+      body: Container(
+        color: backgroundColor,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: SafeArea(
+              child: Center(
+                  child: ListView(children: <Widget>[
             Align(
               alignment: Alignment.center,
-            child:Text(
-                "Sign up to track corona virus",
-                style:TextStyle(
-                  color:const Color(0xFF272343),
-                  fontSize:20,
-                  decoration : null,
-                  fontWeight: FontWeight.bold,
-
-                )
+              child: Text("Sign up to track corona virus",
+                  style: TextStyle(
+                    color: const Color(0xFF272343),
+                    fontSize: 20,
+                    decoration: null,
+                    fontWeight: FontWeight.bold,
+                  )),
             ),
-          ),
-             Form(
-               key: formKey,
-               child:Padding(
-                   padding: const EdgeInsets.only(top:40),
+            Form(
+              key: formKey,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Column(children: <Widget>[
+                  TextFormField(
+                    style: TextStyle(color: const Color(0xFF272343)),
+                    validator: (value) =>
+                        value.isEmpty ? "Username can\'t be empty" : null,
+                    controller: _username,
+                    decoration: new InputDecoration(
+                        labelText: 'Enter your Username',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        border: UnderlineInputBorder()),
+                  ),
+                  TextFormField(
+                    style: TextStyle(color: const Color(0xFF272343)),
+                    validator: (value) =>
+                        value.isEmpty ? "Email can\'t be empty" : null,
+                    controller: _email,
+                    decoration: new InputDecoration(
+                        labelText: 'Enter your Email',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        border: UnderlineInputBorder()),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextFormField(
+                    style: TextStyle(color: const Color(0xFF272343)),
+                    controller: _pass,
+                    validator: (value) {
+                      Pattern pattern =
+                          r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])';
+                      RegExp regex = new RegExp(pattern);
+                      if (value.length <= 7) {
+                        return "Password can\'t be less than 8 caractere";
+                      } else {
+                        if (!regex.hasMatch(value))
+                          return 'Uppercase and lowercase ,numbers are required';
+                        else
+                          return null;
+                      }
+                    },
+                    obscureText: true,
+                    decoration: new InputDecoration(
+                        labelText: 'Enter your Password',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        border: UnderlineInputBorder()),
+                  ),
+                  TextFormField(
+                    style: TextStyle(color: const Color(0xFF272343)),
+                    controller: _confirmPass,
+                    obscureText: true,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return "Password can\'t be empty";
+                      }
+                      if (value != _pass.text) {
+                        return "Verifie your password";
+                      }
+                      return null;
+                    },
+                    decoration: new InputDecoration(
+                        labelText: 'Confirm your password',
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.amber),
+                        ),
+                        border: UnderlineInputBorder()),
+                  ),
 
-                   child: Column(
-
-                       children: <Widget>[
-         TextFormField(
-
-                   style: TextStyle(color: const Color(0xFF272343)),
-
-           validator: (value)=>value.isEmpty?"Username can\'t be empty":null,
-           controller: _username,
-
-    decoration: new InputDecoration(
-                     labelText: 'Enter your Username',
-
-                     enabledBorder: UnderlineInputBorder(
-                       borderSide:
-                       BorderSide(color: Colors.grey),
-                     ),
-                     focusedBorder: UnderlineInputBorder(
-                       borderSide:
-                       BorderSide(color: Colors.amber),
-                     ),
-                     border: UnderlineInputBorder()),
-               ),
-
-                         TextFormField(
-                           style: TextStyle(color: const Color(0xFF272343)),
-                           validator: (value)=>value.isEmpty?"Email can\'t be empty":null,
-                           controller: _email,
-                           decoration: new InputDecoration(
-                               labelText: 'Enter your Email',
-                               enabledBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: Colors.grey),
-                               ),
-                               focusedBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: Colors.amber),
-                               ),
-                               border: UnderlineInputBorder()),
-                           keyboardType: TextInputType.emailAddress,
-                         ),
-                         TextFormField(
-                           style: TextStyle(color: const Color(0xFF272343)),
-                           controller: _pass,
-                           validator:(value){
-                             Pattern pattern =
-                                 r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])';
-                             RegExp regex = new RegExp(pattern);
-                             if(value.length<=7){
-                               return "Password can\'t be less than 8 caractere";
-                             }
-                             else {
-                               if (!regex.hasMatch(value))
-                                 return 'Uppercase and lowercase ,numbers are required';
-                               else
-                                 return null;
-                             }
-                           },
-                           obscureText: true,
-                           decoration: new InputDecoration(
-                               labelText: 'Enter your Password',
-                               enabledBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: Colors.grey),
-                               ),
-                               focusedBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: Colors.amber),
-                               ),
-                               border: UnderlineInputBorder()),
-                         ),
-                         TextFormField(
-                           style: TextStyle(color: const Color(0xFF272343)),
-                           controller: _confirmPass,
-                           obscureText: true,
-                           validator:(value){
-                             if(value.isEmpty){
-                               return "Password can\'t be empty";
-                             }
-                             if(value!=_pass.text){
-                               return "Verifie your password";
-                             }
-                             return null;
-                           },
-                         decoration: new InputDecoration(
-                               labelText: 'Confirm your password',
-                               enabledBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: Colors.grey),
-                               ),
-                               focusedBorder: UnderlineInputBorder(
-                                 borderSide:
-                                 BorderSide(color: Colors.amber),
-                               ),
-                               border: UnderlineInputBorder()),
-                         ),
-
-            /* FutureBuilder<List<Country>>(
+                  /* FutureBuilder<List<Country>>(
                  future: getCountries(),
                  builder: (context, snapshot) {
                    if (snapshot.connectionState != ConnectionState.done) {
@@ -307,89 +276,63 @@ class _SignupState extends State<Signup>  {
                    );
                  }),*/
 
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: RaisedButton(
-                    onPressed: () {
-                      validate(context);
-                    },
-                  // Validate returns true if the form is valid, otherwise false.
-                    textColor: Colors.white,
-                    padding: const EdgeInsets.all(0.0),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: <Color>[
-                            Colors.blue,
-                            Colors.green,
-                            Colors.amber,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.all(
-                          const Radius.circular(10.0),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: RaisedButton(
+                        onPressed: () {
+                          validate(context);
+                        },
+                        // Validate returns true if the form is valid, otherwise false.
+                        textColor: Colors.white,
+                        padding: const EdgeInsets.all(0.0),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                Colors.blue,
+                                Colors.green,
+                                Colors.amber,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.all(
+                              const Radius.circular(10.0),
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(10.0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: const Text('Submit',
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 48, top: 20.0),
+                    child: Row(children: <Widget>[
+                      Text("if you already have an account"),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Login()),
+                          );
+                        },
+                        child: Text(
+                          "Sign in",
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
-
-                      padding: const EdgeInsets.all(10.0),
-                      child:
-                      Align(
-                        alignment: Alignment.center,
-                        child: const Text('Submit', style: TextStyle(fontSize: 15)),
-                      ),
-                    )
-
-
-
-
-
-                ),
-
+                    ]),
+                  ),
+                ]),
               ),
-
-                         Padding(
-                           padding: const EdgeInsets.only(left:48,top:20.0),
-
-                        child: Row(
-
-                             children: <Widget>[
-
-                             Text(
-                                "if you already have an account"
-                              ),
-                             GestureDetector(
-                           onTap: () {
-                             Navigator.push(
-                               context,
-                               MaterialPageRoute(builder: (context) => Login()),
-                             );
-                           },
-
-                           child: Text(
-                             "Sign in",
-                             style: TextStyle(
-                               decoration: TextDecoration.underline,
-                               color: Colors.blue,
-                             ),
-                           ),
-                         ),
-                         ]
-                        ),
-                         ),
-                       ]
-                         ),
-          ),
-         )
-
-
-           ]
-    )
-
-                 )
-
+            )
+          ]))),
         ),
       ),
-      ),
     );
-
   }
 }
