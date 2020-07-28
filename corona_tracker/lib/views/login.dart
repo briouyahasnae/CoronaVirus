@@ -4,6 +4,7 @@ import 'package:corona_tracker/views/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
 import 'package:corona_tracker/views/Home.dart';
+import 'package:corona_tracker/views/DestinationView.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
 
@@ -52,7 +53,7 @@ class _State extends State<Login> {
      else {
       Navigator.push(
        context,
-       MaterialPageRoute(builder: (context) => Home()),
+       MaterialPageRoute(builder: (context) => DestinationView()),
       );
      }
     });

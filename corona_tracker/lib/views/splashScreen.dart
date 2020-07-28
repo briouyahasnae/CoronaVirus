@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:corona_tracker/views/signup.dart';
 import 'package:flutter/material.dart';
 
-
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();

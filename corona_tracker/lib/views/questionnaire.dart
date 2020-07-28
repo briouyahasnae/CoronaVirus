@@ -1,3 +1,4 @@
+import 'package:corona_tracker/classes/Ip_info.dart';
 import 'package:flutter/material.dart';
 
 class Questionnaire extends StatefulWidget {
@@ -55,12 +56,17 @@ int selectedRadio2;
   }
   @override
   Widget build(BuildContext context) {
+
     return  Scaffold(
-      appBar:  AppBar(
-        title: Text("Questionnaire"),
-      ),
-      body: Stepper(
-        steps: _mySteps(),
+      backgroundColor: Colors.white,
+
+        body:Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+        child:SafeArea(
+              child: Stepper(
+
+          steps: _mySteps(),
         currentStep: this._currentStep,
         onStepTapped: (step){
           setState(() {
@@ -92,7 +98,7 @@ int selectedRadio2;
         },
 
       ),
-    );
+    )));
   }
 
   List<Step> _mySteps() {
@@ -124,6 +130,7 @@ int selectedRadio2;
 
             children: <Widget>[
               Row(
+
                   mainAxisAlignment: MainAxisAlignment.center,
 
                   children: <Widget>[
@@ -155,6 +162,7 @@ int selectedRadio2;
                     Text('No'),
                   ]),
               Row(
+
                   mainAxisAlignment: MainAxisAlignment.center,
 
                   children: <Widget>[

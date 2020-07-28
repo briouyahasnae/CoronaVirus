@@ -1,13 +1,14 @@
 import 'dart:core';
 import 'dart:async';
-import 'dart:io';
-import 'package:country_codes/country_codes.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/login.dart';
 import 'package:country_provider/country_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:corona_tracker/classes/Ip_info.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
 class Signup extends StatefulWidget {
@@ -16,40 +17,59 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup>  {
+  bool _isLoading = false;
+  IP_info ip_info;
 
+  @override
+  void initState() {
+    _isLoading=true;
+    _getPublicIP();
+  }
+
+  _getPublicIP() async {
+    try {
+
+      const url = 'http://ip-api.com/json';
+
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        ip_info = IP_info.fromJson(json.decode(response.body));
+        print(ip_info.toString());
+
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      else {
+        // The request failed with a non-200 code
+        print(response.statusCode);
+        print(response.body);
+      }
+
+
+
+    } catch (e) {
+      print(e);
+    }
+  }
   var countries;
   final firestoreInstance = Firestore.instance;
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _username= TextEditingController();
-  String _value;
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  Position _currentPosition;
-  String _currentAddress;
+  /*String _value;
   Future<List<Country>> getCountries() async {
     return countries= await  CountryProvider.getAllCountries();
 
-  }
+  }*/
   Future<void> validate(BuildContext context) async {
     if (formKey.currentState.validate()) {
       int count=0;
-     /* geolocator
-          .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-          .then((Position position) async {
-        _currentPosition = position;
 
-          List<Placemark> p = await geolocator.placemarkFromCoordinates(
-              _currentPosition.latitude, _currentPosition.longitude);
-
-          Placemark place = p[0];
-
-          setState(() {
-            _currentAddress = place.country;
-          });
-      });*/
       var data = Firestore.instance
           .collection('users')
+          // ignore: missing_return
           .getDocuments().then((querySnapshot) {
         querySnapshot.documents.forEach((result) {
           if (result.data['email'] == _email.text) {
@@ -63,7 +83,8 @@ class _SignupState extends State<Signup>  {
                     "email": _email.text,
                     "password": Password.hash(_pass.text, new PBKDF2())
                         .toString(),
-                    "country": _value,
+                    "country": ip_info.country,
+                    "code":ip_info.country_code
                   }
               ).then((_) {
                 return showDialog<void>(
@@ -127,7 +148,6 @@ class _SignupState extends State<Signup>  {
       color: backgroundColor,
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-
           child:Padding(
               padding: const EdgeInsets.only(top:20),
          child: SafeArea(
@@ -250,7 +270,7 @@ class _SignupState extends State<Signup>  {
                                border: UnderlineInputBorder()),
                          ),
 
-             FutureBuilder<List<Country>>(
+            /* FutureBuilder<List<Country>>(
                  future: getCountries(),
                  builder: (context, snapshot) {
                    if (snapshot.connectionState != ConnectionState.done) {
@@ -285,7 +305,7 @@ class _SignupState extends State<Signup>  {
                        return null;
                      },
                    );
-                 }),
+                 }),*/
 
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),

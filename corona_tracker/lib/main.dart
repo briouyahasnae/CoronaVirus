@@ -1,12 +1,13 @@
 import 'package:corona_tracker/views/splashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
+import 'package:corona_tracker/views/questionnaire.dart';
 
-import 'package:country_codes/country_codes.dart';
+
 
 void main() async {
-  /*WidgetsFlutterBinding.ensureInitialized();
-  await CountryCodes.init();*/
+  WidgetsFlutterBinding.ensureInitialized();
+  /*await CountryCodes.init();*/
   runApp(MyApp());
 }
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primaryColor: backgroundColor),
       home: SplashScreen(),
       routes: <String, WidgetBuilder>{
-        '/singup': (BuildContext context) => Home(),
+        '/quest': (BuildContext context) => Questionnaire(),
         '/home': (BuildContext context) => Home(),
       },
     );
