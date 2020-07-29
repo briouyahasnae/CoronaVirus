@@ -79,7 +79,9 @@ class _SignupState extends State<Signup> {
             "email": _email.text,
             "password": Password.hash(_pass.text, new PBKDF2()).toString(),
             "country": ip_info.country,
-            "code": ip_info.country_code
+            "code": ip_info.country_code,
+            "Reponse":false,
+            "malade":false
           }).then((_) {
             return showDialog<void>(
               context: context,

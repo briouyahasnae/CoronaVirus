@@ -1,4 +1,9 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corona_tracker/views/Fichierep.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 
@@ -9,11 +14,46 @@ class DestinationView extends StatefulWidget {
 }
 
 class _DestinationViewState extends State<DestinationView> {
+ static Widget quest;
   int _currentIndex = 0;
+
+  final firestoreInstance = Firestore.instance;
+ static Future<String> getQuest() async{
+    dynamic email = await FlutterSession().get("email");
+
+    var data = Firestore.instance
+        .collection('users')
+        .getDocuments().then((querySnapshot) {
+      querySnapshot.documents.forEach((result) {
+        if (result.data['email'] == email) {
+         if(result.data['Reponse']==true){
+         return Fichierep();
+         }
+         else{
+         return Questionnaire();
+         }
+        }
+
+      });
+    });
+  }
+
+
   final List<Widget> _children = [
     new Home(),
-   new Questionnaire()
+ FutureBuilder<String>(
+ future: getQuest(),
+ builder: (context, AsyncSnapshot<String> snapshot) {
+ if (snapshot.hasData) {
+ return Text(snapshot.data);
+ }
+ }),
+
+
   ];
+
+
+
   void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
