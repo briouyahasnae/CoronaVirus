@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
-
+import 'package:corona_tracker/views/login.dart';
+import 'package:flutter_session/flutter_session.dart';
 
 class DestinationView extends StatefulWidget {
 
@@ -9,6 +10,15 @@ class DestinationView extends StatefulWidget {
 }
 
 class _DestinationViewState extends State<DestinationView> {
+  deconnecter() async{
+    dynamic email=await FlutterSession().get("email");
+     email=null;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+    );
+
+  }
   int _currentIndex = 0;
   final List<Widget> _children = [
     new Home(),
@@ -23,6 +33,15 @@ class _DestinationViewState extends State<DestinationView> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_children[_currentIndex].toString()),
+        actions: <Widget>[
+        IconButton(
+          icon:Icon(Icons.exit_to_app,size: 30,color: Colors.white,),
+          onPressed: () {
+            deconnecter();
+          },
+        ),
+        ],
+
         automaticallyImplyLeading: false,
       ),
      /* floatingActionButton: new FloatingActionButton(
