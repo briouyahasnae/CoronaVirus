@@ -6,7 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+<<<<<<< HEAD
 import 'bottom-navbar-bloc.dart';
+=======
+
+import 'bottom-navbar-bloc.dart';
+
+>>>>>>> hasnae-dev
 
 class DestinationView extends StatefulWidget {
   @override
@@ -28,10 +34,15 @@ Widget t;
     super.dispose();
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
   int _page = 0;
   GlobalKey _bottomNavigationKey = GlobalKey();
   var home;
   int _currentIndex = 0;
+=======
+
+
+>>>>>>> hasnae-dev
   Future<Widget> getRep() async{
      dynamic email = await FlutterSession().get("email");
      Firestore.instance
@@ -51,10 +62,13 @@ Widget t;
            });
          });
      return t;
+<<<<<<< HEAD
 
   final firestoreInstance = Firestore.instance;
    Future<String> getQuest() async {
     dynamic email = await FlutterSession().get("email");
+=======
+>>>>>>> hasnae-dev
 
 }
   @override
@@ -118,6 +132,7 @@ Widget t;
     );
   }
 
+<<<<<<< HEAD
   final List<Widget> _children = [
     Home(),
     Questionnaire(),
@@ -128,6 +143,9 @@ Widget t;
     setState(() {
       _currentIndex = index;
     });
+=======
+
+>>>>>>> hasnae-dev
   Widget _homeArea() {
     return Center(
       child: Text(
@@ -139,6 +157,10 @@ Widget t;
         ),
       ),
     );
+<<<<<<< HEAD
+=======
+
+>>>>>>> hasnae-dev
   }
 
   Widget _alertArea() {
@@ -151,6 +173,7 @@ Widget t;
           fontSize: 25.0,
         ),
       ),
+<<<<<<< HEAD
       /* floatingActionButton: new FloatingActionButton(
         child: new Icon(Icons.fullscreen_exit),
         onPressed: () {
@@ -176,6 +199,9 @@ Widget t;
             _page = index;
           });
         },
+=======
+
+>>>>>>> hasnae-dev
     );
   }
 
@@ -188,10 +214,17 @@ Widget t;
           color: Colors.blue,
           fontSize: 25.0,
         ),
+<<<<<<< HEAD
       ),
         body: Container(
           child: _children[_page]
           ),
         );
+=======
+
+      ));
+>>>>>>> hasnae-dev
   }
+
+
 }
