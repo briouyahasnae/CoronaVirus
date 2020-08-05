@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 
+
 class Questionnaire extends StatefulWidget {
   @override
   _QuestionnaireState createState() => _QuestionnaireState();
@@ -348,7 +349,6 @@ class _QuestionnaireState extends State<Questionnaire> {
           });
 
 
-<<<<<<< HEAD
     });
     var data1 = Firestore.instance
         .collection('users')
@@ -376,13 +376,10 @@ class _QuestionnaireState extends State<Questionnaire> {
       });
     });
   }
-=======
-  });
    /* var data1 = Firestore.instance
 
         .collection('users')
         .document(email).updateData("Response":true);*/
->>>>>>> 594a09214790848208b49efa5895e8145f458c95
 
     Future<void> validateAnswers(BuildContext context) {
     int count=0;
@@ -451,7 +448,7 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Fichierep()),
+                        MaterialPageRoute(builder: (context) =>Fichierep()),
                       );
                     },
                   ),
