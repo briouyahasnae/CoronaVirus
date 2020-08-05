@@ -4,12 +4,11 @@ import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-<<<<<<< HEAD
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-=======
+
 import 'bottom-navbar-bloc.dart';
->>>>>>> hasnae-dev
+
 
 class DestinationView extends StatefulWidget {
   @override
@@ -30,12 +29,8 @@ Widget t;
     _bottomNavBarBloc.close();
     super.dispose();
   }
-<<<<<<< HEAD
-  int _page = 0;
-  GlobalKey _bottomNavigationKey = GlobalKey();
-  var home;
-  int _currentIndex = 0;
-=======
+
+
   Future<Widget> getRep() async{
      dynamic email = await FlutterSession().get("email");
 
@@ -56,7 +51,6 @@ Widget t;
            });
          });
      return t;
->>>>>>> hasnae-dev
 
 }
   @override
@@ -120,18 +114,7 @@ Widget t;
     );
   }
 
-<<<<<<< HEAD
-  final List<Widget> _children = [
-    Home(),
-    Questionnaire(),
-    Maps()
-  ];
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-=======
   Widget _homeArea() {
     return Center(
       child: Text(
@@ -143,7 +126,7 @@ Widget t;
         ),
       ),
     );
->>>>>>> hasnae-dev
+
   }
 
   Widget _alertArea() {
@@ -156,33 +139,7 @@ Widget t;
           fontSize: 25.0,
         ),
       ),
-<<<<<<< HEAD
-      /* floatingActionButton: new FloatingActionButton(
-        child: new Icon(Icons.fullscreen_exit),
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, "/logout");
-        },
-      ),*/
-      bottomNavigationBar: CurvedNavigationBar(
-        key: _bottomNavigationKey,
-        index: 0,
-        height: 50.0,
-        items: <Widget>[
-          Icon(Icons.home, size: 20),
-          Icon(Icons.list, size: 20),
-          Icon(Icons.map, size: 20),
-        ],
-        color: Colors.white,
-        buttonBackgroundColor: Colors.white,
-        backgroundColor: Colors.blueAccent,
-        animationCurve: Curves.easeInOut,
-        animationDuration: Duration(milliseconds: 800),
-        onTap: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
-=======
+
     );
   }
 
@@ -195,11 +152,9 @@ Widget t;
           color: Colors.blue,
           fontSize: 25.0,
         ),
->>>>>>> hasnae-dev
-      ),
-        body: Container(
-          child: _children[_page]
-          ),
-        );
+
+      ));
   }
+
+
 }
