@@ -31,7 +31,7 @@ class _DestinationViewState extends State<DestinationView> {
   int _currentIndex = 0;
 
   final firestoreInstance = Firestore.instance;
-  static Future<String> getQuest() async {
+   Future<String> getQuest() async {
     dynamic email = await FlutterSession().get("email");
 
     var data = Firestore.instance

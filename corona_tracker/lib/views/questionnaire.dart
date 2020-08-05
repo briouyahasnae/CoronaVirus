@@ -348,7 +348,6 @@ class _QuestionnaireState extends State<Questionnaire> {
           });
 
 
-<<<<<<< HEAD
     });
     var data1 = Firestore.instance
         .collection('users')
@@ -372,18 +371,15 @@ class _QuestionnaireState extends State<Questionnaire> {
           result.reference.updateData(<String,dynamic>{
             "malade" : true
           });
-        };
+        }
       });
     });
   }
-=======
-  });
+
    /* var data1 = Firestore.instance
 
         .collection('users')
         .document(email).updateData("Response":true);*/
->>>>>>> 594a09214790848208b49efa5895e8145f458c95
-
     Future<void> validateAnswers(BuildContext context) {
     int count=0;
     if (selectedRadio=="yes") {
