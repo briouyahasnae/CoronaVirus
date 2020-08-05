@@ -6,13 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-<<<<<<< HEAD
-import 'bottom-navbar-bloc.dart';
-=======
 
 import 'bottom-navbar-bloc.dart';
 
->>>>>>> hasnae-dev
+
+
 
 class DestinationView extends StatefulWidget {
   @override
@@ -33,16 +31,8 @@ Widget t;
     _bottomNavBarBloc.close();
     super.dispose();
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
-  int _page = 0;
-  GlobalKey _bottomNavigationKey = GlobalKey();
-  var home;
-  int _currentIndex = 0;
-=======
 
 
->>>>>>> hasnae-dev
   Future<Widget> getRep() async{
      dynamic email = await FlutterSession().get("email");
      Firestore.instance
@@ -62,20 +52,13 @@ Widget t;
            });
          });
      return t;
-<<<<<<< HEAD
-
-  final firestoreInstance = Firestore.instance;
-   Future<String> getQuest() async {
-    dynamic email = await FlutterSession().get("email");
-=======
->>>>>>> hasnae-dev
 
 }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bottom NavBar Navigation'),
+        title: Text(""),
       ),
       body: StreamBuilder<NavBarItem>(
         stream: _bottomNavBarBloc.itemStream,
@@ -100,7 +83,7 @@ Widget t;
               );
 
             case NavBarItem.SETTINGS:
-              return Fichierep();
+              return Maps();
           }
         },
       ),
@@ -118,12 +101,12 @@ Widget t;
                 icon: Icon(Icons.home),
               ),
               BottomNavigationBarItem(
-                title: Text('Notifications'),
-                icon: Icon(Icons.notifications),
+                title: Text('Test'),
+                icon: Icon(Icons.list),
               ),
               BottomNavigationBarItem(
-                title: Text('Settings'),
-                icon: Icon(Icons.settings),
+                title: Text('Maps'),
+                icon: Icon(Icons.map),
               ),
             ],
           );
@@ -132,20 +115,7 @@ Widget t;
     );
   }
 
-<<<<<<< HEAD
-  final List<Widget> _children = [
-    Home(),
-    Questionnaire(),
-    Maps()
-  ];
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-=======
-
->>>>>>> hasnae-dev
   Widget _homeArea() {
     return Center(
       child: Text(
@@ -157,10 +127,7 @@ Widget t;
         ),
       ),
     );
-<<<<<<< HEAD
-=======
 
->>>>>>> hasnae-dev
   }
 
   Widget _alertArea() {
@@ -173,38 +140,8 @@ Widget t;
           fontSize: 25.0,
         ),
       ),
-<<<<<<< HEAD
-      /* floatingActionButton: new FloatingActionButton(
-        child: new Icon(Icons.fullscreen_exit),
-        onPressed: () {
-          Navigator.pushReplacementNamed(context, "/logout");
-        },
-      ),*/
-      bottomNavigationBar: CurvedNavigationBar(
-        key: _bottomNavigationKey,
-        index: 0,
-        height: 50.0,
-        items: <Widget>[
-          Icon(Icons.home, size: 20),
-          Icon(Icons.list, size: 20),
-          Icon(Icons.map, size: 20),
-        ],
-        color: Colors.white,
-        buttonBackgroundColor: Colors.white,
-        backgroundColor: Colors.blueAccent,
-        animationCurve: Curves.easeInOut,
-        animationDuration: Duration(milliseconds: 800),
-        onTap: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
-=======
-
->>>>>>> hasnae-dev
     );
   }
-
   Widget _settingsArea() {
     return Center(
       child: Text(
@@ -214,17 +151,12 @@ Widget t;
           color: Colors.blue,
           fontSize: 25.0,
         ),
-<<<<<<< HEAD
-      ),
-        body: Container(
-          child: _children[_page]
-          ),
-        );
-=======
 
-      ));
->>>>>>> hasnae-dev
+      )
+    );
   }
+
+
 
 
 }
