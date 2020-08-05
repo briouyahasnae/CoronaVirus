@@ -30,7 +30,7 @@ class _State extends State<Login> {
         .collection('users')
         .getDocuments().then((querySnapshot) {
      querySnapshot.documents.forEach((result) {
-      if (result.data['email'] == _email.text &&
+      if (result.data['email'] == _email.text.trimRight() &&
           result.data['password'] == Password.hash(_pass.text, new PBKDF2())
               .toString()) {
        count++;
@@ -63,6 +63,18 @@ setSession(context);
       );
      }
     });
+   }
+  }
+  String validateEmail(String value) {
+   String pattern =
+       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+   RegExp regExp = new RegExp(pattern);
+   if (value == null || value.length <= 0) {
+    return "Email is Required";
+   } else if (!regExp.hasMatch(value)) {
+    return "Invalid Email";
+   } else {
+    return null;
    }
   }
   @override
@@ -129,8 +141,9 @@ setSession(context);
 
     TextFormField(
     style: TextStyle(color: const Color(0xFF272343)),
+     maxLines: 1,
     controller: _email,
-     validator: (value)=>value.isEmpty?"Email can\'t be empty":null,
+     validator: (value)=>validateEmail(value.trimRight()),
 
      decoration: new InputDecoration(
     labelText: 'Enter your Email',
