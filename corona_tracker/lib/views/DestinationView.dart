@@ -3,6 +3,8 @@ import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:corona_tracker/views/login.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:corona_tracker/views/Maps.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class DestinationView extends StatefulWidget {
 
@@ -10,6 +12,7 @@ class DestinationView extends StatefulWidget {
 }
 
 class _DestinationViewState extends State<DestinationView> {
+
   deconnecter() async{
     dynamic email=await FlutterSession().get("email");
      email=null;
@@ -19,10 +22,14 @@ class _DestinationViewState extends State<DestinationView> {
     );
 
   }
+  int _page = 0;
+  GlobalKey _bottomNavigationKey = GlobalKey();
+  var home;
   int _currentIndex = 0;
   final List<Widget> _children = [
-    new Home(),
-   new Questionnaire()
+    Home(),
+    Questionnaire(),
+    Maps()
   ];
   void onTabTapped(int index) {
     setState(() {
@@ -50,25 +57,29 @@ class _DestinationViewState extends State<DestinationView> {
           Navigator.pushReplacementNamed(context, "/logout");
         },
       ),*/
-      body: _children[_currentIndex], // new
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabTapped, // new
-        currentIndex: _currentIndex, // new
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.home),
-            title: new Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.list),
-            title: new Text('Test Covid-19'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              title: Text('Profile')
-          )
+      bottomNavigationBar: CurvedNavigationBar(
+        key: _bottomNavigationKey,
+        index: 0,
+        height: 50.0,
+        items: <Widget>[
+          Icon(Icons.home, size: 20),
+          Icon(Icons.list, size: 20),
+          Icon(Icons.map, size: 20),
         ],
+        color: Colors.white,
+        buttonBackgroundColor: Colors.white,
+        backgroundColor: Colors.blueAccent,
+        animationCurve: Curves.easeInOut,
+        animationDuration: Duration(milliseconds: 800),
+        onTap: (index) {
+          setState(() {
+            _page = index;
+          });
+        },
       ),
-    );
+        body: Container(
+          child: _children[_page]
+          ),
+        );
   }
 }

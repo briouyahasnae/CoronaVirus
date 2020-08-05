@@ -67,38 +67,24 @@ class _SignupState extends State<Signup> {
           .getDocuments()
           .then((querySnapshot) {
         querySnapshot.documents.forEach((result) {
-          if (result.data['email'] == _email.text) {
+          if (result.data['email'] == _email.text.trimRight()) {
             count++;
           }
         });
         if (count == 0) {
           firestoreInstance.collection("users").add({
             "username": _username.text,
-            "email": _email.text,
+            "email": _email.text.trimRight(),
             "password": Password.hash(_pass.text, new PBKDF2()).toString(),
             "country": ip_info.country,
             "code": ip_info.country_code
           }).then((_) {
-            return showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Done'),
-                  content: const Text('Welcome to corona tracker'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Ok'),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Login()),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Login()),
             );
+            return CircularProgressIndicator();
+
           });
         } else {
           return showDialog<void>(
@@ -126,7 +112,18 @@ class _SignupState extends State<Signup> {
     }
     return null;
   }
-
+  String validateEmail(String value) {
+    String pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regExp = new RegExp(pattern);
+    if (value == null || value.length <= 0) {
+      return "Email is Required";
+    } else if (!regExp.hasMatch(value)) {
+      return "Invalid Email";
+    } else {
+      return null;
+    }
+  }
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -173,7 +170,7 @@ class _SignupState extends State<Signup> {
                   TextFormField(
                     style: TextStyle(color: const Color(0xFF272343)),
                     validator: (value) =>
-                        value.isEmpty ? "Email can\'t be empty" : null,
+                        validateEmail(value.trimRight()),
                     controller: _email,
                     decoration: new InputDecoration(
                         labelText: 'Enter your Email',
