@@ -4,12 +4,9 @@ import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-<<<<<<< HEAD
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-=======
 import 'bottom-navbar-bloc.dart';
->>>>>>> hasnae-dev
 
 class DestinationView extends StatefulWidget {
   @override
@@ -35,10 +32,8 @@ Widget t;
   GlobalKey _bottomNavigationKey = GlobalKey();
   var home;
   int _currentIndex = 0;
-=======
   Future<Widget> getRep() async{
      dynamic email = await FlutterSession().get("email");
-
      Firestore.instance
          .collection('users')
          .getDocuments().then((QuerySnapshot querySnapshot) {
@@ -56,7 +51,10 @@ Widget t;
            });
          });
      return t;
->>>>>>> hasnae-dev
+
+  final firestoreInstance = Firestore.instance;
+   Future<String> getQuest() async {
+    dynamic email = await FlutterSession().get("email");
 
 }
   @override
@@ -120,7 +118,6 @@ Widget t;
     );
   }
 
-<<<<<<< HEAD
   final List<Widget> _children = [
     Home(),
     Questionnaire(),
@@ -131,7 +128,6 @@ Widget t;
     setState(() {
       _currentIndex = index;
     });
-=======
   Widget _homeArea() {
     return Center(
       child: Text(
@@ -143,7 +139,6 @@ Widget t;
         ),
       ),
     );
->>>>>>> hasnae-dev
   }
 
   Widget _alertArea() {
@@ -156,7 +151,6 @@ Widget t;
           fontSize: 25.0,
         ),
       ),
-<<<<<<< HEAD
       /* floatingActionButton: new FloatingActionButton(
         child: new Icon(Icons.fullscreen_exit),
         onPressed: () {
@@ -182,7 +176,6 @@ Widget t;
             _page = index;
           });
         },
-=======
     );
   }
 
@@ -195,7 +188,6 @@ Widget t;
           color: Colors.blue,
           fontSize: 25.0,
         ),
->>>>>>> hasnae-dev
       ),
         body: Container(
           child: _children[_page]

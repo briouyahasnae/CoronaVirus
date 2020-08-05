@@ -372,10 +372,11 @@ class _QuestionnaireState extends State<Questionnaire> {
           result.reference.updateData(<String,dynamic>{
             "malade" : true
           });
-        };
+        }
       });
     });
   }
+
    /* var data1 = Firestore.instance
 
         .collection('users')
