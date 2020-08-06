@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
+import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter_session/flutter_session.dart';
 var email;
 var home;

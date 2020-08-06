@@ -3,8 +3,8 @@ import 'package:corona_tracker/classes/Ip_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:corona_tracker/views/Fichierep.dart';
-
+import 'package:corona_tracker/views/DestinationView.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Questionnaire extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class _QuestionnaireState extends State<Questionnaire> {
   String selectedRadio4;
   bool _autoValidate = false;
   final firestoreInstance = Firestore.instance;
-
+  Position _currentPosition;
   @override
   void initState() {
     super.initState();
@@ -35,7 +35,19 @@ class _QuestionnaireState extends State<Questionnaire> {
     selectedRadio3 = null;
     selectedRadio4 = null;
   }
+  void _getCurrentLocation() {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }).catchError((e) {
+      print(e);
+    });
+  }
 // Changes the selected value on 'onChanged' click on each radio button
   void setSelectedRadio(String val) {
     setState(() {
@@ -356,7 +368,8 @@ class _QuestionnaireState extends State<Questionnaire> {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
           result.reference.updateData(<String,dynamic>{
-            "Reponse" : true
+            "Reponse" : true,
+
           });
         };
       });
@@ -370,7 +383,9 @@ class _QuestionnaireState extends State<Questionnaire> {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
           result.reference.updateData(<String,dynamic>{
-            "malade" : true
+            "malade" : true,
+            "x":_currentPosition.latitude,
+            "y":_currentPosition.longitude
           });
         }
       });
@@ -421,7 +436,7 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Fichierep()),
+                      MaterialPageRoute(builder: (context) => DestinationView()),
                     );
                   },
                 ),
@@ -449,7 +464,7 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>Fichierep()),
+                        MaterialPageRoute(builder: (context) =>DestinationView()),
                       );
                     },
                   ),

@@ -79,7 +79,9 @@ class _SignupState extends State<Signup> {
             "country": ip_info.country,
             "code": ip_info.country_code,
             "Reponse":false,
-            "malade":false
+            "malade":false,
+            "x":null,
+            "y":null
           }).then((_) {
             Navigator.push(
               context,

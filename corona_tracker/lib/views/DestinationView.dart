@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corona_tracker/main.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:futuristic/futuristic.dart';
 
 import 'bottom-navbar-bloc.dart';
 
@@ -19,10 +21,12 @@ class DestinationView extends StatefulWidget {
 
 class _DestinationViewState extends State<DestinationView> {
    BottomNavBarBloc _bottomNavBarBloc;
+   Future<Widget> _quest;
 Widget t;
   @override
   void initState() {
     super.initState();
+    _quest=getRep();
     _bottomNavBarBloc = BottomNavBarBloc();
   }
 
@@ -63,23 +67,17 @@ Widget t;
       body: StreamBuilder<NavBarItem>(
         stream: _bottomNavBarBloc.itemStream,
         initialData: _bottomNavBarBloc.defaultItem,
+
         builder: (BuildContext context, AsyncSnapshot<NavBarItem> snapshot) {
           switch (snapshot.data) {
             case NavBarItem.HOME:
               return  Home();
             case NavBarItem.ALERT:
-              return FutureBuilder<Widget>(
-              future: getRep(),
-              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot1) {
-              if (snapshot1.hasData) {
-                return snapshot1.data;
-      }
-      else{
-        return Center(
-        child: CircularProgressIndicator()
-      );
-      }
-    }
+              return Futuristic<Widget>(
+                autoStart: true,
+                futureBuilder: () => _quest,
+                busyBuilder: (_) => Center (child:CircularProgressIndicator()),
+                dataBuilder: (_, data) => data,
               );
 
             case NavBarItem.SETTINGS:
