@@ -66,7 +66,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: FutureBuilder(
-            future: _tasks,
+            future: _fetchUsers(),
             builder: (BuildContext context, AsyncSnapshot  snapshot) {
               if (snapshot.hasData) {
                 return ListView(
