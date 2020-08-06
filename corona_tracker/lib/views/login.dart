@@ -6,10 +6,11 @@ import 'package:password/password.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/DestinationView.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
 var session = FlutterSession();
-
+bool visible=false;
 class Login extends StatefulWidget {
   @override
   _State createState() => _State();
@@ -23,12 +24,15 @@ class _State extends State<Login> {
   Future<void> setSession(BuildContext context) async{
    await session.set("email", _email.text);
   }
-  Future<void> validate(BuildContext context) async {
+  void validate(BuildContext context)  {
    int count = 0;
    if (_formKey.currentState.validate()) {
-    var data = Firestore.instance
+    setState(() {
+     visible=true;
+    });
+       Firestore.instance
         .collection('users')
-        .getDocuments().then((querySnapshot) {
+        .getDocuments().then((querySnapshot) async {
      querySnapshot.documents.forEach((result) {
       if (result.data['email'] == _email.text.trimRight() &&
           result.data['password'] == Password.hash(_pass.text, new PBKDF2())
@@ -36,7 +40,11 @@ class _State extends State<Login> {
        count++;
       }
      });
-     if (count == 0) {
+    switch(count){
+     case 0:
+      setState(() {
+       visible=false;
+      });
       return showDialog<void>(
        context: context,
        builder: (BuildContext context) {
@@ -54,13 +62,17 @@ class _State extends State<Login> {
         );
        },
       );
-     }
-     else {
-setSession(context);
+     break;
+     default:
+      setState(() {
+        visible=false;
+      });
+ setSession(context);
       Navigator.push(
        context,
        MaterialPageRoute(builder: (context) => DestinationView()),
       );
+      break;
      }
     });
    }
@@ -81,10 +93,10 @@ setSession(context);
   Widget build(BuildContext context) {
     return Scaffold(
 
-     body: Container(
-       color: backgroundColor,
-       height: MediaQuery.of(context).size.height,
-       width: MediaQuery.of(context).size.width,
+     body: ModalProgressHUD(
+      inAsyncCall: visible,
+      color: backgroundColor,
+
        child:SafeArea(
 
 
@@ -180,8 +192,8 @@ setSession(context);
     padding: const EdgeInsets.only(top: 20.0),
     child: RaisedButton(
     onPressed: () {
-    // Validate returns true if the form is valid, otherwise false.
-    validate(context);
+     validate(context);
+     // stop the Progress indicator after 5 seconds
     },
     textColor: Colors.white,
     padding: const EdgeInsets.all(0.0),

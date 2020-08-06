@@ -7,6 +7,7 @@ import 'package:corona_tracker/views/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
 import 'package:corona_tracker/classes/Ip_info.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 final backgroundColor = const Color(0xFFf4f4f6);
 
@@ -18,7 +19,7 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   bool _isLoading = false;
   IP_info ip_info;
-
+ bool visible=false;
   @override
   void initState() {
     _isLoading = true;
@@ -60,9 +61,11 @@ class _SignupState extends State<Signup> {
   }*/
   Future<void> validate(BuildContext context) async {
     if (formKey.currentState.validate()) {
+      setState(() {
+        visible=true;
+      });
       int count = 0;
-
-      var data = Firestore.instance
+      Firestore.instance
           .collection('users')
           .getDocuments()
           .then((querySnapshot) {
@@ -81,6 +84,9 @@ class _SignupState extends State<Signup> {
             "Reponse":false,
             "malade":false
           }).then((_) {
+            setState(() {
+              visible=false;
+            });
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Login()),
@@ -89,6 +95,9 @@ class _SignupState extends State<Signup> {
 
           });
         } else {
+          setState(() {
+            visible=false;
+          });
           return showDialog<void>(
             context: context,
             builder: (BuildContext context) {
@@ -130,10 +139,9 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: ModalProgressHUD(
+        inAsyncCall: visible,
         color: backgroundColor,
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: SafeArea(

@@ -15,11 +15,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Future<List<dynamic>> _tasks;
+
+
   var code;
   var country;
   var username;
   var r;
-  Future<List<dynamic>> fetchUsers() async {
+  Future<List<dynamic>> _fetchUsers() async {
     dynamic email = await FlutterSession().get("email");
     var db = Firestore.instance
         .collection('users')
@@ -46,19 +49,24 @@ class _HomeState extends State<Home> {
     totaleDeath=r[0]["total_deaths"];
     seriousCases=r[0]["total_serious_cases"];*/
       r = json.decode(result.body)['countrydata'];
-      return json.decode(result.body)['countrydata'];
     }
     else{
-      throw Exception ('Failed to load Data');
+     r= throw Exception ('Failed to load Data');
     }
-  }
 
+    return r;
+  }
+  @override
+  void initState() {
+    _tasks = _fetchUsers();
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: FutureBuilder<List<dynamic>>(
-            future: fetchUsers(),
+        body: FutureBuilder(
+            future: _tasks,
             builder: (BuildContext context, AsyncSnapshot  snapshot) {
               if (snapshot.hasData) {
                 return ListView(
