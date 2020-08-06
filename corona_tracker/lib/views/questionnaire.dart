@@ -44,6 +44,8 @@ class _QuestionnaireState extends State<Questionnaire> {
       setState(() {
         _currentPosition = position;
       });
+      print("x ${_currentPosition.latitude}");
+      print("y ${_currentPosition.longitude}");
     }).catchError((e) {
       print(e);
     });
@@ -377,11 +379,12 @@ class _QuestionnaireState extends State<Questionnaire> {
         }
   Future<void> updateMalade(BuildContext context) async{
     dynamic email = await FlutterSession().get("email");
-    var data2 = Firestore.instance
+          Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
+          _getCurrentLocation();
           result.reference.updateData(<String,dynamic>{
             "malade" : true,
             "x":_currentPosition.latitude,
@@ -416,6 +419,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     }
     print(count);
     if(count >=3){
+
       updateMalade(context);
         return showDialog<void>(
           context: context,

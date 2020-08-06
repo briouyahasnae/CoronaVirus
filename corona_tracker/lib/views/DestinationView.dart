@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:futuristic/futuristic.dart';
+
+import 'package:corona_tracker/views/login.dart';
 
 import 'bottom-navbar-bloc.dart';
 
@@ -23,12 +24,8 @@ class _DestinationViewState extends State<DestinationView> {
    BottomNavBarBloc _bottomNavBarBloc;
    Future<Widget> _quest;
 Widget t;
-  @override
-  void initState() {
-    super.initState();
-    _quest=getRep();
-    _bottomNavBarBloc = BottomNavBarBloc();
-  }
+
+
 
   @override
   void dispose() {
@@ -38,7 +35,7 @@ Widget t;
 
 
   Future<Widget> getRep() async{
-     dynamic email = await FlutterSession().get("email");
+    dynamic email = await FlutterSession().get("email");
      Firestore.instance
          .collection('users')
          .getDocuments().then((QuerySnapshot querySnapshot) {
@@ -51,18 +48,43 @@ Widget t;
            else {
              t = Questionnaire();
            }
-           print(t.toString());
          }
            });
          });
      return t;
 
 }
+deconnecter() async{
+  dynamic email = await FlutterSession().get("email");
+  email = null;
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => Login()),
+  );
+}
+   @override
+   void initState() {
+     super.initState();
+     _bottomNavBarBloc = BottomNavBarBloc();
+   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(""),
+        title: Text("Corona tracker"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.exit_to_app,
+              size: 30,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              deconnecter();
+            },
+          ),
+        ],
+        automaticallyImplyLeading: false,
       ),
       body: StreamBuilder<NavBarItem>(
         stream: _bottomNavBarBloc.itemStream,
@@ -73,16 +95,25 @@ Widget t;
             case NavBarItem.HOME:
               return  Home();
             case NavBarItem.ALERT:
-              return Futuristic<Widget>(
-                autoStart: true,
-                futureBuilder: () => _quest,
-                busyBuilder: (_) => Center (child:CircularProgressIndicator()),
-                dataBuilder: (_, data) => data,
+
+              return FutureBuilder<Widget>(
+              future: getRep(),
+              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot1) {
+                if (snapshot1.hasData) {
+                  return snapshot1.data;
+                }
+                else {
+                  return Center(
+                      child: CircularProgressIndicator()
+                  );
+                }
+              }
               );
 
             case NavBarItem.SETTINGS:
               return Maps();
           }
+
         },
       ),
       bottomNavigationBar: StreamBuilder(
@@ -90,71 +121,29 @@ Widget t;
         initialData: _bottomNavBarBloc.defaultItem,
         builder: (BuildContext context, AsyncSnapshot<NavBarItem> snapshot) {
           return BottomNavigationBar(
-            fixedColor: Colors.blueAccent,
-            currentIndex: snapshot.data.index,
-            onTap: _bottomNavBarBloc.pickItem,
             items: [
               BottomNavigationBarItem(
                 title: Text('Home'),
                 icon: Icon(Icons.home),
+                backgroundColor: Colors.blue
               ),
               BottomNavigationBarItem(
                 title: Text('Test'),
                 icon: Icon(Icons.list),
+                backgroundColor: Colors.greenAccent
               ),
               BottomNavigationBarItem(
                 title: Text('Maps'),
-                icon: Icon(Icons.map),
+                icon: Icon(Icons.location_on),
+                backgroundColor: Colors.red
               ),
             ],
+            fixedColor: Colors.blueAccent,
+            currentIndex: snapshot.data.index,
+            onTap: _bottomNavBarBloc.pickItem,
           );
         },
       ),
     );
   }
-
-
-  Widget _homeArea() {
-    return Center(
-      child: Text(
-        'Home Screen',
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          color: Colors.green,
-          fontSize: 25.0,
-        ),
-      ),
-    );
-
   }
-
-  Widget _alertArea() {
-    return Center(
-      child: Text(
-        'Notifications Screen',
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          color: Colors.red,
-          fontSize: 25.0,
-        ),
-      ),
-    );
-  }
-  Widget _settingsArea() {
-    return Center(
-      child: Text(
-        'Settings Screen',
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          color: Colors.blue,
-          fontSize: 25.0,
-        ),
-
-      )
-    );
-  }
-
-
-
-
-}

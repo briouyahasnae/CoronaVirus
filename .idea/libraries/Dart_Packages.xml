@@ -138,7 +138,7 @@
         <entry key="flag">
           <value>
             <list>
-              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/flag-3.0.1/lib" />
+              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/flag-3.0.4/lib" />
             </list>
           </value>
         </entry>
@@ -191,13 +191,6 @@
             </list>
           </value>
         </entry>
-        <entry key="futuristic">
-          <value>
-            <list>
-              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/futuristic-0.1.3/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="geolocator">
           <value>
             <list>
@@ -215,14 +208,14 @@
         <entry key="google_maps_flutter">
           <value>
             <list>
-              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.28+1/lib" />
+              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.29/lib" />
             </list>
           </value>
         </entry>
         <entry key="google_maps_flutter_platform_interface">
           <value>
             <list>
-              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter_platform_interface-1.0.2/lib" />
+              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter_platform_interface-1.0.3/lib" />
             </list>
           </value>
         </entry>
@@ -286,6 +279,13 @@
           <value>
             <list>
               <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.1.8/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="modal_progress_hud">
+          <value>
+            <list>
+              <option value="D:/flutter/.pub-cache/hosted/pub.dartlang.org/modal_progress_hud-0.1.3/lib" />
             </list>
           </value>
         </entry>
@@ -535,16 +535,15 @@
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.5/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_platform_interface-1.0.4/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-0.1.1+2/lib" />
-      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/flag-3.0.1/lib" />
+      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/flag-3.0.4/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_launcher_icons-0.7.5/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.8/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_session-0.1.1/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_svg-0.17.4/lib" />
-      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/futuristic-0.1.3/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/geolocator-5.3.2+2/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_api_availability-2.0.4/lib" />
-      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.28+1/lib" />
-      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter_platform_interface-1.0.2/lib" />
+      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter-0.5.29/lib" />
+      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/google_maps_flutter_platform_interface-1.0.3/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/grouped_buttons-1.0.4/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.2/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-3.1.4/lib" />
@@ -554,6 +553,7 @@
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/location_permissions-3.0.0+1/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.6/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.1.8/lib" />
+      <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/modal_progress_hud-0.1.3/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/password-1.0.0/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/path-1.6.4/lib" />
       <root url="file://D:/flutter/.pub-cache/hosted/pub.dartlang.org/path_drawing-0.4.1/lib" />
