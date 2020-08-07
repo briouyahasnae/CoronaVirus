@@ -8,10 +8,12 @@ import 'package:corona_tracker/views/splashScreen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
+import 'package:http/http.dart';
 var email;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   /*await CountryCodes.init();*/
+
   runApp(MyApp());
 }
 
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
 
   MyHomePage({Key key, this.title}) : super(key: key);
-  Widget t;
+
   int currentIndex = 0;
 
   final String title;
@@ -44,11 +46,40 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   final storage = new FlutterSecureStorage();
+
+   static  Widget r;
+
    static Widget t;
-   static Widget s;
+
+
+   //list widget for bottom navigation
+
   List<Widget> app =[
-    Home(),t,
+    Home(),FutureBuilder(
+
+      future: getRep1(),
+      builder: (BuildContext context,AsyncSnapshot<Widget> snapshot){
+
+   switch (snapshot.connectionState) {
+   case ConnectionState.active:
+   case ConnectionState.waiting:
+   return Center(
+   child:Text("Loading..."));
+   default :
+   if (snapshot.hasError)
+   return Text('Error: ${snapshot.error}');
+   else {
+   if(snapshot.hasData) {
+   return snapshot.data;
+   }
+   }
+   break;
+
+   }
+      return null;
+      }),
   Maps()
   ];
 
@@ -64,24 +95,26 @@ class _MyHomePageState extends State<MyHomePage> {
    Future<Widget> getRep1() async{
      String  email  = await storage.read(key: "email");
       Firestore.instance
-         .collection('users')
-         .getDocuments().then((QuerySnapshot querySnapshot) {
-       querySnapshot.documents.forEach((DocumentSnapshot result) {
-         setState(() {
-           if (result.data['email'] == email) {
-             if (result.data['Reponse'] == true) {
-               t = Fichierep();
-             }
-             else {
-               t = Questionnaire();
-             }
-           }
-         });
-       });
 
-     });
-     print(t);
-   return t;
+         .collection('users')
+         .getDocuments();
+   dn.then((querySnapshot) {
+       querySnapshot.documents.forEach((result) {
+
+         if (result.data['email'] == email) {
+           if(result.data['Reponse']==true) {
+
+            r=Fichierep();
+           }
+             else
+             r=Questionnaire();
+
+           }
+       });
+    });
+   await Future<Widget>.delayed(const Duration(seconds: 2));
+return r;
+
 
    }
    Future<String> readSession() async{
@@ -94,6 +127,7 @@ void initState() {
 
     // TODO: implement initState
     super.initState();
+
     FutureBuilder(
       future:readSession(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -115,6 +149,16 @@ void initState() {
                  }}}
     );
     getRep1();
+
+    getRep1().then((result){
+      print("result $result");
+      setState(() {
+        t=result;
+      });
+
+    });
+      print(t);
+
   }
    int currentIndex = 0;
   @override
@@ -154,6 +198,36 @@ void initState() {
               title: Text('Home'),
               activeColor: Colors.red,
               textAlign: TextAlign.center,
+
+            onPressed: () {
+              deconnecter(context);
+            },
+          ),
+        ],
+        automaticallyImplyLeading: false,
+      ),
+      body:app[currentIndex],
+
+      bottomNavigationBar: BottomNavyBar(
+        selectedIndex: currentIndex,
+        showElevation: true,
+        itemCornerRadius: 8,
+        curve: Curves.easeInBack,
+        onItemSelected: (index) => setState(() {
+          currentIndex = index;
+        }),
+        items: [
+          BottomNavyBarItem(
+            icon: Icon(Icons.home),
+            title: Text('Home'),
+            activeColor: Colors.red,
+            textAlign: TextAlign.center,
+          ),
+
+          BottomNavyBarItem(
+            icon: Icon(Icons.list),
+            title: Text("Test covid 19"
+
             ),
 
             BottomNavyBarItem(
@@ -174,4 +248,5 @@ void initState() {
       );
   
   }
+
 }

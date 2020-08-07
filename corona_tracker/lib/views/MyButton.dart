@@ -38,10 +38,11 @@ Future<Widget> getRep() async{
         else {
           t = Questionnaire();
         }
-        print(t.toString());
+
       }
     });
   });
+  print(t);
   return t;
 
 }
