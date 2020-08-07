@@ -15,16 +15,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Future<List<dynamic>> _tasks;
-
-
   var code;
   var country;
   var username;
   var r;
-  Future<List<dynamic>> _fetchUsers() async {
+  var d;
+
+    Future getData() async {
     dynamic email = await FlutterSession().get("email");
-    var db = Firestore.instance
+    print(email);
+    Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
@@ -35,11 +35,11 @@ class _HomeState extends State<Home> {
         }
       });
     });
-    final String apiUrl = "https://api.thevirustracker.com/free-api?countryTotal=${code}";
+    final String apiUrl = "https://api.thevirustracker.com/free-api?countryTotal=MA";
     // var url = 'https://api.thevirustracker.com/free-api?countryTotal='code;
     var result = await http.get(apiUrl);
     if (result.statusCode == 200) {
-      /* r= json.decode(result.body)['countrydata'];
+      /* r=
     print(r);
     deaths=r[0]["total_new_deaths_today"];
     newCases=r[0]["total_new_cases_today"];
@@ -48,374 +48,373 @@ class _HomeState extends State<Home> {
     totaleRecov=r[0]["total_recovered"];
     totaleDeath=r[0]["total_deaths"];
     seriousCases=r[0]["total_serious_cases"];*/
-      r = json.decode(result.body)['countrydata'];
+      print(json.decode(result.body)['countrydata']);
+      return json.decode(result.body)['countrydata'];
+
     }
     else{
-     r= throw Exception ('Failed to load Data');
+     throw Exception ('Failed to load Data');
     }
 
-    return r;
   }
-  @override
-  void initState() {
-    _tasks = _fetchUsers();
+@override
+void initState() {
+    // TODO: implement initState
     super.initState();
-
+     r= getData();
+     print(r);
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
-            future: _fetchUsers(),
-            builder: (BuildContext context, AsyncSnapshot  snapshot) {
-              if (snapshot.hasData) {
-                return ListView(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 20,
+    body: FutureBuilder(
+    future: r,
+        builder: (context, snapshot) {
+    switch (snapshot.connectionState) {
+      case ConnectionState.active:
+      case ConnectionState.waiting:
+    return CircularProgressIndicator();
+    default :
+    if (snapshot.hasError)
+    return Text('Error: ${snapshot.error}');
+    else {
+      if(snapshot.hasData) {
+        return
+          ListView(
+              children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 4.0),
+                    child: ClayContainer(
+                        color: Colors.white,
+                        height: 100,
+                        borderRadius: 20,
+                        depth: 30,
+                        spread: 30,
+                        child: Column(
+                            children: [
+                              Text(
+                                country,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Flag(code, width: 40, height: 40,),
+                            ])
+                    )),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child:
+                  Container(
+                    child: Text(
+                      "Global Stats",
+                      style: TextStyle(
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        inherit: true,
+                        color: Colors.black,
+                        letterSpacing: 0.4,
                       ),
-                      Padding(
-                          padding: EdgeInsets.only(top: 4.0),
-                          child: ClayContainer(
-                              color: Colors.white,
-                              height: 100,
-                              borderRadius: 20,
-                              depth: 30,
-                              spread: 30,
-                              child: Column(
-                                  children: [
-                                    Text(
-                                      /* children: <Widget>[
-    Container(child:
-    Text(*/
-                                      country,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Flag(code, width: 40, height: 40,),
-                                  ])
-                          )),
-                      SizedBox(
-                        height: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                    children:
+                    <Widget>[
+                      ClayContainer(
+                        color: Colors.white,
+                        height: 100,
+                        width: 150,
+                        borderRadius: 20,
+                        child:
+                        Center(
+                          child:
+                          Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text("Total cases",
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(snapshot.data[0]["total_cases"]
+                                  .toString(),
+                                style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
                       ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      ClayContainer(
+                        color: Colors.white,
+                        height: 100,
+                        width: 150,
+                        borderRadius: 20,
+                        child:
+                        Center(
+                          child:
+                          Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text("Total Deaths",
+                                style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                snapshot.data[0]["total_deaths"].toString(),
+                                style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: <Widget>[
+                    ClayContainer(
+                      color: Colors.white,
+                      height: 100,
+                      width: 150,
+                      borderRadius: 20,
+                      child:
                       Center(
                         child:
-                        Container(
-                          child: Text(
-                            "Global Stats",
-                            style: TextStyle(
-                              fontSize: 27,
-                              fontWeight: FontWeight.bold,
-                              inherit: true,
-                              color: Colors.black,
-                              letterSpacing: 0.4,
+                        Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 20,
                             ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                          children:
-                          <Widget>[
-                            ClayContainer(
-                              color: Colors.white,
-                              height: 100,
-                              width: 150,
-                              borderRadius: 20,
-                              child:
-                              Center(
-                                child:
-                                Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text("Total cases",
-                                      style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(snapshot.data[0]["total_cases"]
-                                        .toString(),
-                                      style: TextStyle(
-                                          color: Colors.orange,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            Text("Recoverd Cases",
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-
                             ),
                             SizedBox(
-                              width: 10,
+                              height: 20,
                             ),
-                            ClayContainer(
-                              color: Colors.white,
-                              height: 100,
-                              width: 150,
-                              borderRadius: 20,
-                              child:
-                              Center(
-                                child:
-                                Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text("Total Deaths",
-                                      style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      snapshot.data[0]["total_deaths"]
-                                          .toString(),
-                                      style: TextStyle(
-                                          color: Colors.redAccent,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ]
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          ClayContainer(
-                            color: Colors.white,
-                            height: 100,
-                            width: 150,
-                            borderRadius: 20,
-                            child:
-                            Center(
-                              child:
-                              Column(
-                                children: <Widget>[
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text("Recoverd Cases",
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    snapshot.data[0]["total_recovered"]
-                                        .toString(),
-                                    style: TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "Active Cases",
-                        style: TextStyle(
-                          color: Colors.redAccent,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          inherit: true,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                          children: <Widget>[
-                            ClayContainer(
-                              color: Colors.white,
-                              height: 100,
-                              width: 100,
-                              borderRadius: 75,
-                              curveType: CurveType.concave,
-                              child: Column(children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      20, 20, 0, 5),),
-                                ClayText(
-                                  "Active cases ", textColor: Colors.black,),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      20, 10, 0, 5),),
-                                //  ClayText(pointer.coronaCurrent, textColor: Colors.yellow,),
-                                Text(
-                                  snapshot.data[0]["total_serious_cases"]
-                                      .toString(),
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.blueAccent,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                              ),
-
-
-                            ),
-                          ]
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "New cases",
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.blueAccent,
-                          fontWeight: FontWeight.bold,
-                          inherit: true,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          ClayContainer(
-                            color: Colors.white,
-                            height: 100,
-                            width: 100,
-                            borderRadius: 50,
-                            curveType: CurveType.concave,
-                            child: Column(children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    20, 20, 0, 5),),
-                              ClayText("New infected",
-                                textColor: Colors.black,),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    20, 10, 0, 5),),
-                              //  ClayText(pointer.coronaCurrent, textColor: Colors.yellow,),
-                              Text(
-                                snapshot.data[0]["total_new_cases_today"]
-                                    .toString(),
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                            ),
-
-
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          ClayContainer(
-                            color: Colors.white,
-                            height: 100,
-                            width: 100,
-                            borderRadius: 60,
-                            curveType: CurveType.concave,
-                            child: Column(children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    20, 20, 0, 5),),
-                              ClayText(
-                                "Recovered", textColor: Colors.black,),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    20, 10, 0, 5),),
-                              //  ClayText(pointer.coronaMild, textColor: Colors.orangeAccent,),
-                              Text(
-                                snapshot.data[0]["total_active_cases"]
-                                    .toString(),
-                                style: TextStyle(
-                                  fontSize: 17,
+                            Text(
+                              snapshot.data[0]["total_recovered"].toString(),
+                              style: TextStyle(
                                   color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
                               ),
-                            ],
                             ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          ClayContainer(
-                            color: Colors.white,
-                            height: 100,
-                            width: 100,
-                            borderRadius: 75,
-                            curveType: CurveType.concave,
-                            child: Column(children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    20, 20, 0, 5),),
-                              ClayText(
-                                "Deaths", textColor: Colors.black,),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    20, 10, 0, 5),),
-                              //  ClayText(pointer.coronaMild, textColor: Colors.orangeAccent,),
-                              Text(
-                                snapshot.data[0]["total_new_deaths_today"]
-                                    .toString(),
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Active Cases",
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    inherit: true,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                    children: <Widget>[
+                      ClayContainer(
+                        color: Colors.white,
+                        height: 100,
+                        width: 100,
+                        borderRadius: 75,
+                        curveType: CurveType.concave,
+                        child: Column(children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                20, 20, 0, 5),),
+                          ClayText(
+                            "Active cases ", textColor: Colors.black,),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                20, 10, 0, 5),),
+                          //  ClayText(pointer.coronaCurrent, textColor: Colors.yellow,),
+                          Text(
+                            snapshot.data[0]["total_serious_cases"].toString(),
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
+                        ),
+
+
+                      ),
+                    ]
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "New cases",
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.blueAccent,
+                    fontWeight: FontWeight.bold,
+                    inherit: true,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: <Widget>[
+                    ClayContainer(
+                      color: Colors.white,
+                      height: 100,
+                      width: 100,
+                      borderRadius: 50,
+                      curveType: CurveType.concave,
+                      child: Column(children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              20, 20, 0, 5),),
+                        ClayText("New infected",
+                          textColor: Colors.black,),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              20, 10, 0, 5),),
+                        //  ClayText(pointer.coronaCurrent, textColor: Colors.yellow,),
+                        Text(
+                          snapshot.data[0]["total_new_cases_today"].toString(),
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                       ),
 
-                    ].toList()
-                );
-              }
-                return
-                  (
-                      Center(
-                          child: CircularProgressIndicator()
-                      )
-                  );
 
-            }));
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ClayContainer(
+                      color: Colors.white,
+                      height: 100,
+                      width: 100,
+                      borderRadius: 60,
+                      curveType: CurveType.concave,
+                      child: Column(children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              20, 20, 0, 5),),
+                        ClayText(
+                          "Recovered", textColor: Colors.black,),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              20, 10, 0, 5),),
+                        //  ClayText(pointer.coronaMild, textColor: Colors.orangeAccent,),
+                        Text(
+                          snapshot.data[0]["total_active_cases"].toString(),
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ClayContainer(
+                      color: Colors.white,
+                      height: 100,
+                      width: 100,
+                      borderRadius: 75,
+                      curveType: CurveType.concave,
+                      child: Column(children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              20, 20, 0, 5),),
+                        ClayText(
+                          "Deaths", textColor: Colors.black,),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              20, 10, 0, 5),),
+                        //  ClayText(pointer.coronaMild, textColor: Colors.orangeAccent,),
+                        Text(
+                          snapshot.data[0]["total_new_deaths_today"].toString(),
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                      ),
+                    ),
+                  ],
+                ),
+
+              ].toList()
+          );
+      }
+      return Text("No Data");
+    }}
+    return null;
+    }));
+  }
   }
 /*class _HomeState extends State<Home> {
   Map<String, dynamic> covid_info;
@@ -488,4 +487,3 @@ class _HomeState extends State<Home> {
   ])))));
   }
 */
-}

@@ -10,14 +10,15 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 var email;
-var home;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   email = await FlutterSession().get("email");
 
+   email = await FlutterSession().get("email");
   /*await CountryCodes.init();*/
   runApp(MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -48,43 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Home(),Questionnaire(),
   Maps()
   ];
- static Widget getapp(){
-    FutureBuilder<Widget>(
-        future: getRep(),
-        builder: (BuildContext context, AsyncSnapshot<Widget> snapshot1) {
-          if (snapshot1.hasData) {
-            home= snapshot1.data;
-            return home;
-          }
-          else{
-            home= Center(
-                child: CircularProgressIndicator()
 
-            );
-          return home;
-          }});
-    return home;
-  }
-  static Future<Widget> getRep() async{
-    dynamic email = await FlutterSession().get("email");
-    Firestore.instance
-        .collection('users')
-        .getDocuments().then((QuerySnapshot querySnapshot) {
-      // ignore: avoid_function_literals_in_foreach_calls
-      querySnapshot.documents.forEach((DocumentSnapshot result) {
-        if (result.data['email'] == email) {
-          if (result.data['Reponse'] == true) {
-            t = Fichierep();
-          }
-          else {
-            t = Questionnaire();
-          }
-        }
-      });
-    });
-    return t;
-
-  }
   deconnecter() async{
     dynamic email = await FlutterSession().get("email");
     email = null;
@@ -100,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(app[currentIndex].toString()),
         actions: <Widget>[
           IconButton(
             icon: Icon(

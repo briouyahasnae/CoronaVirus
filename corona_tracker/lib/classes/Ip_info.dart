@@ -6,9 +6,12 @@ class IP_info{
   final String state_name;
   final String country_code;
   final String country;
+  final double x;
+  final double y;
+
 
   IP_info({this.IP, this.city, this.st_code,this.ZIP,
-    this.state_name,this.country_code,this.country});
+    this.state_name,this.country_code,this.country,this.x,this.y});
 
   factory IP_info.fromJson(Map<String, dynamic> json){
     return IP_info(
@@ -19,6 +22,9 @@ class IP_info{
       st_code:json['region'],
       country:json['country'],
       state_name:json['regionName'],
+      x:json['lat'],
+      y:json['lon']
+
     );
   }
 
