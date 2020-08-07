@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/bottom_navy_bar.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
-import 'package:corona_tracker/views/questionnaire.dart';
+
 import 'package:flutter_session/flutter_session.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
@@ -34,7 +34,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+
   MyHomePage({Key key, this.title}) : super(key: key);
+  Widget t;
+  int currentIndex = 0;
 
   final String title;
 
@@ -43,14 +46,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static Widget t;
-  var rep;
+   static Widget t;
+   static Widget s;
   List<Widget> app =[
-    Home(),Questionnaire(),
+    Home(),t,
   Maps()
   ];
 
+<<<<<<< HEAD
   deconnecter() async{
+=======
+
+ Future<void> deconnecter() async{
+>>>>>>> hasnae-dev
     dynamic email = await FlutterSession().get("email");
     email = null;
     Navigator.push(
@@ -58,9 +66,39 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) => Login()),
     );
   }
-  int currentIndex = 0;
 
+   Future<Widget> getRep1() async{
+     dynamic email = await FlutterSession().get("email");
+     Firestore.instance
+         .collection('users')
+         .getDocuments().then((QuerySnapshot querySnapshot) {
+       querySnapshot.documents.forEach((DocumentSnapshot result) {
+         setState(() {
+           if (result.data['email'] == email) {
+             if (result.data['Reponse'] == true) {
+               t = Fichierep();
+             }
+             else {
+               t = Questionnaire();
+             }
+           }
+         });
+       });
 
+     });
+     print(t);
+   return t;
+
+   }
+
+@override
+void initState() {
+
+    // TODO: implement initState
+    super.initState();
+    getRep1();
+  }
+   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
