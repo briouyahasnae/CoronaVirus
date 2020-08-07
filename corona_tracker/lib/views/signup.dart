@@ -5,6 +5,7 @@ import 'package:corona_tracker/views/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final backgroundColor = const Color(0xFFf4f4f6);
 
@@ -14,6 +15,8 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  DateTime backbuttonpressedTime;
+
   bool _isLoading;
  bool visible=false;
   @override
@@ -34,6 +37,22 @@ class _SignupState extends State<Signup> {
     return countries= await  CountryProvider.getAllCountries();
 
   }*/
+  Future<bool> onWillPop() async {
+    DateTime currentTime = DateTime.now();
+    //Statement 1 Or statement2
+    bool backButton = backbuttonpressedTime == null ||
+        currentTime.difference(backbuttonpressedTime) > Duration(seconds: 3);
+    if (backButton) {
+      backbuttonpressedTime = currentTime;
+      Fluttertoast.showToast(
+          msg: "Double Click to exit app",
+          backgroundColor: Colors.black,
+          textColor: Colors.white);
+      return false;
+    }
+    return true;
+  }
+
   Future<void> validate(BuildContext context) async {
     if (formKey.currentState.validate()) {
       setState(() {

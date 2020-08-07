@@ -6,7 +6,6 @@ import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/Maps.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 void main() {
   runApp(MyApp());
 }

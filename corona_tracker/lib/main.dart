@@ -8,6 +8,7 @@ import 'package:corona_tracker/views/splashScreen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 var email;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
    static Widget t;
    static Widget s;
@@ -55,10 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
  Future<void> deconnecter() async{
    await storage.delete(key: "email").then((value) =>
-   Navigator.push(
+   Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => Login()
-   )));
+   ),
+   ModalRoute.withName("login"))
+   );
   }
 
    Future<Widget> getRep1() async{
@@ -88,6 +92,21 @@ class _MyHomePageState extends State<MyHomePage> {
      String  value = await storage.read(key: "email");
        return value;
    }
+  Future<bool> onWillPop() async {
+    DateTime currentTime = DateTime.now();
+    //Statement 1 Or statement2
+    bool backButton = backbuttonpressedTime == null ||
+        currentTime.difference(backbuttonpressedTime) > Duration(seconds: 3);
+    if (backButton) {
+      backbuttonpressedTime = currentTime;
+      Fluttertoast.showToast(
+          msg: "Double Click to exit app",
+          backgroundColor: Colors.black,
+          textColor: Colors.white);
+      return false;
+    }
+    return true;
+  }
 String valueNew;
 @override
 void initState() {
@@ -119,8 +138,9 @@ void initState() {
    int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-
-      return Scaffold(
+    return WillPopScope(
+        onWillPop: onWillPop,   // Empty Function.
+        child: Scaffold(
         appBar: AppBar(
           title: Text(app[currentIndex].toString()),
           actions: <Widget>[
@@ -171,7 +191,7 @@ void initState() {
             ),
           ],
         ),
-      );
+        ));
   
   }
 }

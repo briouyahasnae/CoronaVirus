@@ -7,6 +7,7 @@ import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/main.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
 bool visible=false;
@@ -77,6 +78,7 @@ class _LoginState extends State<Login> {
     });
    }
   }
+
   String validateEmail(String value) {
    String pattern =
        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -91,7 +93,7 @@ class _LoginState extends State<Login> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  return Scaffold(
 
      body: ModalProgressHUD(
       inAsyncCall: visible,
@@ -116,9 +118,10 @@ class _LoginState extends State<Login> {
 
      GestureDetector(
       onTap: () {
-       Navigator.push(
+       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Signup()),
+       ModalRoute.withName("signup"),
        );
       },
 
