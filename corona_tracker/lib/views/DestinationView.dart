@@ -9,6 +9,7 @@ import 'package:corona_tracker/views/Maps.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 import 'package:corona_tracker/views/login.dart';
+import 'package:http/http.dart';
 
 import 'bottom-navbar-bloc.dart';
 
@@ -51,6 +52,7 @@ Widget t;
          }
            });
          });
+
      return t;
 
 }
@@ -66,6 +68,7 @@ deconnecter() async{
    void initState() {
      super.initState();
      _bottomNavBarBloc = BottomNavBarBloc();
+     getRep();
    }
   @override
   Widget build(BuildContext context) {
@@ -95,9 +98,18 @@ deconnecter() async{
             case NavBarItem.HOME:
               return  Home();
             case NavBarItem.ALERT:
+              FutureBuilder(
+                future:getRep(),
+                 builder: (BuildContext context, AsyncSnapshot  snapshot1) {
+                  if(snapshot1.hasData){
+                   t=Fichierep();
+                  }
+                  t= Questionnaire();
+                 }
+              );
+                 return t;
 
-             return Questionnaire();
-            case NavBarItem.SETTINGS:
+              case NavBarItem.SETTINGS:
               return Maps();
           }
 

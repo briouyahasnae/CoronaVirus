@@ -1,7 +1,12 @@
 library bottom_navy_bar;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_session/flutter_session.dart';
+import 'package:corona_tracker/views/Fichierep.dart';
+import 'package:corona_tracker/views/questionnaire.dart';
+
 
 class BottomNavyBar extends StatelessWidget {
   final int selectedIndex;
@@ -15,7 +20,7 @@ class BottomNavyBar extends StatelessWidget {
   final double itemCornerRadius;
   final double containerHeight;
   final Curve curve;
-
+ Widget t;
   BottomNavyBar({
     Key key,
     this.selectedIndex = 0,
@@ -35,6 +40,7 @@ class BottomNavyBar extends StatelessWidget {
     assert(onItemSelected != null);
     assert(curve != null);
   }
+
 
   @override
   Widget build(BuildContext context) {

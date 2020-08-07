@@ -26,35 +26,13 @@ class _QuestionnaireState extends State<Questionnaire> {
   String selectedRadio4;
   bool _autoValidate = false;
   final firestoreInstance = Firestore.instance;
+Position _currentPosition;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  new FlutterLocalNotificationsPlugin();
 
-  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 
-  @override
-  void initState() {
-    super.initState();
-    selectedRadio = null;
-    selectedRadio1 = null;
-    selectedRadio2 = null;
-    selectedRadio3 = null;
-    selectedRadio4 = null;
-    _getCurrentLocation();
-    initNotifications();
-  }
-  void initNotifications() async {
-    var initializationSettingsAndroid =
-    new AndroidInitializationSettings('ic_launcher');
-    var initializationSettingsIOS = new IOSInitializationSettings(
-        onDidReceiveLocalNotification: (i, string1, string2, string3) {
-          print("received notifications");
-        });
-    var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (string) {
-          print("selected notification");
-        });
-  }
+
+
   void _getCurrentLocation() {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
@@ -113,18 +91,49 @@ class _QuestionnaireState extends State<Questionnaire> {
         this._currentStep = step;
       }
     });
+
   }
- Future<void> _onTap() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        '1', 'rrtutors', 'flutter snippets',
-        importance: Importance.Max, priority: Priority.High);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(0, 'rrtutors',
-        'Android & Flutter Tutorials', platformChannelSpecifics,
-        payload: 'item x');
-    print('hi');
+ void _onTapMalade() async {
+
+   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+       'your channel id', 'your channel name', 'your channel description',
+       importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+   var platformChannelSpecifics = NotificationDetails(
+       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+   await flutterLocalNotificationsPlugin.show(
+       0, 'result test', 'you should do corona test', platformChannelSpecifics,
+       payload: 'item x');
+ print('hi');
+  }
+  Future<void> _initNotifications() async{
+
+    var initializationSettingsAndroid = new AndroidInitializationSettings('logo');
+    print(initializationSettingsAndroid );
+    var initializationSettingsIOS = new IOSInitializationSettings(
+        onDidReceiveLocalNotification: (i, string1, string2, string3) {
+          print("received notifications");
+        });
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (string) {
+          print("selected notification");
+        });
+
+  }
+  @override
+  void initState() {
+    print("Initialize 1");
+    _initNotifications();
+    super.initState();
+    selectedRadio = null;
+    selectedRadio1 = null;
+    selectedRadio2 = null;
+    selectedRadio3 = null;
+    selectedRadio4 = null;
+    _getCurrentLocation();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -166,6 +175,7 @@ class _QuestionnaireState extends State<Questionnaire> {
                           selectedRadio4 != null) {
                         Response(context);
                         validateAnswers(context);
+
                       }
                     }
                   });
@@ -498,7 +508,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     }
     print(count);
     if(count >=3){
-
+_onTapMalade();
       updateMalade(context);
         return showDialog<void>(
           context: context,
@@ -515,7 +525,7 @@ class _QuestionnaireState extends State<Questionnaire> {
                     selectedRadio2 = null;
                     selectedRadio3 = null;
                     selectedRadio4 = null;
-await _onTap();
+
 
                     Navigator.push(
                       context,
