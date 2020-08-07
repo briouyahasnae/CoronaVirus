@@ -1,7 +1,5 @@
 import 'dart:core';
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,11 +14,12 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  bool _isLoading = false;
+  bool _isLoading;
  bool visible=false;
   @override
   void initState() {
     _isLoading = true;
+    super.initState();
   }
 
 
@@ -44,6 +43,7 @@ class _SignupState extends State<Signup> {
       Firestore.instance
           .collection('users')
           .getDocuments()
+          // ignore: missing_return
           .then((querySnapshot) {
         querySnapshot.documents.forEach((result) {
           if (result.data['email'] == _email.text.trimRight()) {

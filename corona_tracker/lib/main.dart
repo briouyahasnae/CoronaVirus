@@ -1,19 +1,16 @@
-import 'package:corona_tracker/views/DestinationView.dart';
 import 'package:corona_tracker/views/Login.dart';
 import 'package:corona_tracker/views/Maps.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/bottom_navy_bar.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
-
-import 'package:flutter_session/flutter_session.dart';
+import 'package:corona_tracker/views/splashScreen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 var email;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-   email = await FlutterSession().get("email");
   /*await CountryCodes.init();*/
   runApp(MyApp());
 }
@@ -21,6 +18,7 @@ void main() async {
 
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home:SplashScreen(),
     );
   }
 }
@@ -46,6 +44,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final storage = new FlutterSecureStorage();
    static Widget t;
    static Widget s;
   List<Widget> app =[
@@ -53,23 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Maps()
   ];
 
-<<<<<<< HEAD
-  deconnecter() async{
-=======
 
  Future<void> deconnecter() async{
->>>>>>> hasnae-dev
-    dynamic email = await FlutterSession().get("email");
-    email = null;
-    Navigator.push(
+   await storage.delete(key: "email").then((value) =>
+   Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Login()),
-    );
+      MaterialPageRoute(builder: (context) => Login()
+   )));
   }
 
    Future<Widget> getRep1() async{
-     dynamic email = await FlutterSession().get("email");
-     Firestore.instance
+     String  email  = await storage.read(key: "email");
+      Firestore.instance
          .collection('users')
          .getDocuments().then((QuerySnapshot querySnapshot) {
        querySnapshot.documents.forEach((DocumentSnapshot result) {
@@ -90,67 +84,94 @@ class _MyHomePageState extends State<MyHomePage> {
    return t;
 
    }
-
+   Future<String> readSession() async{
+     String  value = await storage.read(key: "email");
+       return value;
+   }
+String valueNew;
 @override
 void initState() {
 
     // TODO: implement initState
     super.initState();
+    FutureBuilder(
+      future:readSession(),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+             case ConnectionState.waiting:
+               return Center(
+                child:Text("Loading..."));
+               default :
+                 if (snapshot.hasError)
+                         return Text('Error: ${snapshot.error}');
+                 else {
+                   if (snapshot.hasData) {
+                     setState(() {
+                       valueNew = snapshot.data;
+                     });
+                   }
+                   return null;
+                 }}}
+    );
     getRep1();
   }
    int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(app[currentIndex].toString()),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.exit_to_app,
-              size: 30,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              deconnecter();
-            },
-          ),
-        ],
-        automaticallyImplyLeading: false,
-      ),
-      body:app[currentIndex],
 
-      bottomNavigationBar: BottomNavyBar(
-        selectedIndex: currentIndex,
-        showElevation: true,
-        itemCornerRadius: 8,
-        curve: Curves.easeInBack,
-        onItemSelected: (index) => setState(() {
-          currentIndex = index;
-        }),
-        items: [
-          BottomNavyBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-            activeColor: Colors.red,
-            textAlign: TextAlign.center,
-          ),
-
-          BottomNavyBarItem(
-            icon: Icon(Icons.list),
-            title: Text("Test covid 19"
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(app[currentIndex].toString()),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                size: 30,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                deconnecter();
+              },
             ),
-            activeColor: Colors.pink,
-            textAlign: TextAlign.center,
-          ),
-          BottomNavyBarItem(
-            icon: Icon(Icons.location_on),
-            title: Text('Location'),
-            activeColor: Colors.blue,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+          ],
+          automaticallyImplyLeading: false,
+        ),
+        body: app[currentIndex],
+
+        bottomNavigationBar: BottomNavyBar(
+          selectedIndex: currentIndex,
+          showElevation: true,
+          itemCornerRadius: 8,
+          curve: Curves.easeInBack,
+          onItemSelected: (index) =>
+              setState(() {
+                currentIndex = index;
+              }),
+          items: [
+            BottomNavyBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+              activeColor: Colors.red,
+              textAlign: TextAlign.center,
+            ),
+
+            BottomNavyBarItem(
+              icon: Icon(Icons.list),
+              title: Text("Test covid 19"
+              ),
+              activeColor: Colors.pink,
+              textAlign: TextAlign.center,
+            ),
+            BottomNavyBarItem(
+              icon: Icon(Icons.location_on),
+              title: Text('Location'),
+              activeColor: Colors.blue,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+  
   }
 }

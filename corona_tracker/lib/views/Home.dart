@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_session/flutter_session.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flag/flag.dart';
 import 'package:corona_tracker/classes/Ip_info.dart';

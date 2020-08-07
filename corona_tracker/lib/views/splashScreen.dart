@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'package:corona_tracker/views/signup.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:corona_tracker/main.dart';
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final storage = new FlutterSecureStorage();
   final splashDelay =11;
   final backgroundColor=const Color(0xFFf4f4f6);
 
@@ -23,8 +25,18 @@ class _SplashScreenState extends State<SplashScreen> {
     return Timer(_duration, navigationPage);
   }
 
-  void navigationPage() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder:(BuildContext context) => new Signup() ));
+  void navigationPage() async {
+    String value = await storage.read(key: "email");
+    Widget home ;
+    if(value == null){
+      home=new Signup();
+    }
+    else {
+      home = MyHomePage();
+    }
+    Navigator.pushReplacement(context, MaterialPageRoute(
+        builder:(BuildContext context) =>
+        home ));
   }
 
   @override

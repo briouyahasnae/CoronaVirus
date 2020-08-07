@@ -4,9 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
-import 'package:corona_tracker/views/DestinationView.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:corona_tracker/main.dart';
 class Questionnaire extends StatefulWidget {
   @override
   _QuestionnaireState createState() => _QuestionnaireState();
@@ -14,7 +13,6 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
-  var _currentPosition;
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
   final TextEditingController _weight = TextEditingController();
@@ -26,13 +24,9 @@ class _QuestionnaireState extends State<Questionnaire> {
   String selectedRadio4;
   bool _autoValidate = false;
   final firestoreInstance = Firestore.instance;
-Position _currentPosition;
+  Position _currentPosition;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   new FlutterLocalNotificationsPlugin();
-
-
-
-
   void _getCurrentLocation() {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
@@ -201,11 +195,10 @@ Position _currentPosition;
                             ?
                         RaisedButton.icon(
                           icon: Icon(Icons.create),
-
                           label: Text('CREATE'),
                           color: Colors.green,
                         )
-                            : RaisedButton.icon(
+                  : RaisedButton.icon(
                           icon: Icon(Icons.navigate_next),
                           onPressed: onStepContinue,
                           label: Text('CONTINUE'),
@@ -529,7 +522,7 @@ _onTapMalade();
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DestinationView()),
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
                     );
                   },
                 ),
@@ -557,7 +550,7 @@ _onTapMalade();
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>DestinationView()),
+                        MaterialPageRoute(builder: (context) =>MyHomePage()),
                       );
                     },
                   ),

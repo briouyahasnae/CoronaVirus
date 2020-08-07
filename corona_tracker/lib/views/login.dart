@@ -4,25 +4,25 @@ import 'package:corona_tracker/views/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
 import 'package:corona_tracker/views/Home.dart';
-import 'package:corona_tracker/views/DestinationView.dart';
-import 'package:flutter_session/flutter_session.dart';
+import 'package:corona_tracker/main.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final backgroundColor=const Color(0xFFf4f4f6);
-var session = FlutterSession();
 bool visible=false;
 class Login extends StatefulWidget {
   @override
-  _State createState() => _State();
+  _LoginState createState() => _LoginState();
 }
 
 
-class _State extends State<Login> {
-  final _formKey = GlobalKey<FormState>();
+class _LoginState extends State<Login> {
+ final storage = new FlutterSecureStorage();
+ final _formKey = GlobalKey<FormState>();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _email = TextEditingController();
-  Future<void> setSession(BuildContext context) async{
-   await session.set("email", _email.text);
+  Future<void> setSession() async{
+      await storage.write(key: "email", value: _email.text.trimRight());
   }
   void validate(BuildContext context)  {
    int count = 0;
@@ -67,10 +67,10 @@ class _State extends State<Login> {
       setState(() {
         visible=false;
       });
- setSession(context);
+     setSession();
       Navigator.push(
        context,
-       MaterialPageRoute(builder: (context) => DestinationView()),
+       MaterialPageRoute(builder: (context) => MyHomePage()),
       );
       break;
      }

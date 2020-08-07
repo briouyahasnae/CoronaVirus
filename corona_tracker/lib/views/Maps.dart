@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter_session/flutter_session.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/classes/Ip_info.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +13,7 @@ class Maps extends StatefulWidget {
 }
 
 class _Maps extends State<Maps> {
+  final storage = new FlutterSecureStorage();
   GoogleMapController mapController;
   final Map<String, Marker> _markers = {};
   final Map<String, Circle> _circle= {};
@@ -68,14 +69,14 @@ class _Maps extends State<Maps> {
       );
       _markers["Current Location"] = marker;
     });
-    dynamic email = await FlutterSession().get("email");
-    print(email);
+    String value = await storage.read(key: "emai");
+    print(value);
     int count=0;
     Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
-        if (result.data['email'] != email) {
+        if (result.data['email'] != value) {
           if (result.data['malade'] == true) {
             setState(() {
            Circle circle=   Circle( //radius marker
