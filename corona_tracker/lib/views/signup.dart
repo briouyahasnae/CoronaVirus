@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:password/password.dart';
-import 'package:corona_tracker/classes/Ip_info.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 final backgroundColor = const Color(0xFFf4f4f6);
@@ -18,35 +17,12 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   bool _isLoading = false;
-  IP_info ip_info;
  bool visible=false;
   @override
   void initState() {
     _isLoading = true;
-    _getPublicIP();
   }
 
-  _getPublicIP() async {
-    try {
-      const url = 'http://ip-api.com/json';
-
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        ip_info = IP_info.fromJson(json.decode(response.body));
-        print(ip_info.toString());
-
-        setState(() {
-          _isLoading = false;
-        });
-      } else {
-        // The request failed with a non-200 code
-        print(response.statusCode);
-        print(response.body);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
 
   var countries;
   final firestoreInstance = Firestore.instance;
@@ -79,8 +55,6 @@ class _SignupState extends State<Signup> {
             "username": _username.text,
             "email": _email.text.trimRight(),
             "password": Password.hash(_pass.text, new PBKDF2()).toString(),
-            "country": ip_info.country,
-            "code": ip_info.country_code,
             "Reponse":false,
             "malade":false,
             "x":null,

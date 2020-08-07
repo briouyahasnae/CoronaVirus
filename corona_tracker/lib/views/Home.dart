@@ -7,6 +7,7 @@ import 'package:flutter_session/flutter_session.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clay_containers/clay_containers.dart';
 import 'package:flag/flag.dart';
+import 'package:corona_tracker/classes/Ip_info.dart';
 
 class Home extends StatefulWidget {
 
@@ -20,22 +21,37 @@ class _HomeState extends State<Home> {
   var username;
   var r;
   var d;
+  dynamic email;
+  IP_info ip_info;
+  bool _isLoading=false;
+  getCode(){
 
+  }
     Future getData() async {
-    dynamic email = await FlutterSession().get("email");
-    print(email);
-    Firestore.instance
-        .collection('users')
-        .getDocuments().then((querySnapshot) {
-      querySnapshot.documents.forEach((result) {
-        if (result.data['email'] == email) {
-          code = result.data['code'];
-          username = result.data['username'];
-          country = result.data['country'];
+      try {
+        const url = 'http://ip-api.com/json';
+
+        final response = await http.get(url);
+        if (response.statusCode == 200) {
+          ip_info = IP_info.fromJson(json.decode(response.body));
+          print(ip_info.toString());
+
+          setState(() {
+            _isLoading = false;
+            country=ip_info.country;
+            code=ip_info.country_code;
+          });
+        } else {
+          // The request failed with a non-200 code
+          print(response.statusCode);
+          print(response.body);
         }
-      });
-    });
-    final String apiUrl = "https://api.thevirustracker.com/free-api?countryTotal=MA";
+      } catch (e) {
+        print(e);
+      }
+
+
+    final String apiUrl = "https://api.thevirustracker.com/free-api?countryTotal=${ip_info.country_code}";
     // var url = 'https://api.thevirustracker.com/free-api?countryTotal='code;
     var result = await http.get(apiUrl);
     if (result.statusCode == 200) {
@@ -62,7 +78,7 @@ void initState() {
     // TODO: implement initState
     super.initState();
      r= getData();
-     print(r);
+     print("Im her $r");
   }
   @override
   Widget build(BuildContext context) {
@@ -73,7 +89,8 @@ void initState() {
     switch (snapshot.connectionState) {
       case ConnectionState.active:
       case ConnectionState.waiting:
-    return CircularProgressIndicator();
+    return Center(
+      child:Text("Loading..."));
     default :
     if (snapshot.hasError)
     return Text('Error: ${snapshot.error}');
@@ -96,7 +113,7 @@ void initState() {
                         child: Column(
                             children: [
                               Text(
-                                country,
+                               country,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 30,

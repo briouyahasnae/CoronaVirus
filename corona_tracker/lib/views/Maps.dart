@@ -17,6 +17,7 @@ class _Maps extends State<Maps> {
   final Map<String, Marker> _markers = {};
   final Map<String, Circle> _circle= {};
   IP_info ip_info;
+  List<Circle> list;
   LatLng _center=LatLng(33.01887,-8.01458) ;
   bool _isLoading=false;
   _getPublicIP() async {
@@ -69,6 +70,7 @@ class _Maps extends State<Maps> {
     });
     dynamic email = await FlutterSession().get("email");
     print(email);
+    int count=0;
     Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
@@ -76,20 +78,21 @@ class _Maps extends State<Maps> {
         if (result.data['email'] != email) {
           if (result.data['malade'] == true) {
             setState(() {
-              final circle =
-              Circle( //radius marker
-                circleId: CircleId("current"),
+           Circle circle=   Circle( //radius marker
+                circleId: CircleId("current${count}"),
                   center: LatLng(result.data['x'], result.data['y']),
                   radius: 4000,
-                  strokeColor: Colors.blue,
-                  strokeWidth: 2,
+                  fillColor: Colors.green.withOpacity(0.5),
+                  strokeColor: Colors.green,
+                  strokeWidth: 3,
                   visible: true
               );
-              _circle["Current Location"] = circle;
-
+            _circle["current index $count"]=circle;
             });
           }
+
         }
+        count++;
       });
     });
   }
@@ -107,10 +110,10 @@ class _Maps extends State<Maps> {
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(
             target: _center,
-            zoom: 4.0,
+            zoom: 5.0,
           ),
           markers: _markers.values.toSet(),
-          circles: _circle.values.toSet(),
+          circles:Set<Circle>.of(_circle.values),
         ),
     );
   }

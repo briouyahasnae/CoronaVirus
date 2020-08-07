@@ -14,7 +14,7 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
-
+  var _currentPosition;
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
   final TextEditingController _weight = TextEditingController();
@@ -62,7 +62,7 @@ class _QuestionnaireState extends State<Questionnaire> {
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-        _currentPosition = position;
+         _currentPosition = position;
       });
       print("x ${_currentPosition.latitude}");
       print("y ${_currentPosition.longitude}");

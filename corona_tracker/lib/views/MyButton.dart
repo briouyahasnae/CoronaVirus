@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:futuristic/futuristic.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 import 'package:corona_tracker/views/Home.dart';
@@ -68,12 +67,12 @@ class Home extends StatelessWidget {
 class GoodButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Futuristic<Widget>(
+   /* return Futuristic<Widget>(
       futureBuilder: () => getRep(),
       initialBuilder: (_, start) => RaisedButton(child: Text('Good button example'), onPressed: start),
       busyBuilder: (_) => CircularProgressIndicator(),
       dataBuilder: (_, data) => Text(data.toString()),
-    );
+    );*/
   }
 
 }
