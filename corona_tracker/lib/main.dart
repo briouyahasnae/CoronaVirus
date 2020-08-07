@@ -9,12 +9,14 @@ import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
+import 'package:http/http.dart';
 var email;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
    email = await FlutterSession().get("email");
   /*await CountryCodes.init();*/
+
   runApp(MyApp());
 }
 
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
 
   MyHomePage({Key key, this.title}) : super(key: key);
-  Widget t;
+
   int currentIndex = 0;
 
   final String title;
@@ -46,48 +48,69 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+   static  Widget r;
    static Widget t;
-   static Widget s;
+
+
+   //list widget for bottom navigation
+
   List<Widget> app =[
-    Home(),t,
+    Home(),FutureBuilder(
+
+      future: getRep1(),
+      builder: (BuildContext context,AsyncSnapshot<Widget> snapshot){
+
+   switch (snapshot.connectionState) {
+   case ConnectionState.active:
+   case ConnectionState.waiting:
+   return Center(
+   child:Text("Loading..."));
+   default :
+   if (snapshot.hasError)
+   return Text('Error: ${snapshot.error}');
+   else {
+   if(snapshot.hasData) {
+   return snapshot.data;
+   }
+   }
+   break;
+
+   }
+      return null;
+      }),
   Maps()
   ];
 
-<<<<<<< HEAD
-  deconnecter() async{
-=======
 
- Future<void> deconnecter() async{
->>>>>>> hasnae-dev
-    dynamic email = await FlutterSession().get("email");
-    email = null;
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Login()),
-    );
+ void deconnecter(BuildContext context) async{
+   dynamic email = await FlutterSession().get("email");
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) =>Login()));
   }
 
-   Future<Widget> getRep1() async{
-     dynamic email = await FlutterSession().get("email");
-     Firestore.instance
-         .collection('users')
-         .getDocuments().then((QuerySnapshot querySnapshot) {
-       querySnapshot.documents.forEach((DocumentSnapshot result) {
-         setState(() {
-           if (result.data['email'] == email) {
-             if (result.data['Reponse'] == true) {
-               t = Fichierep();
-             }
-             else {
-               t = Questionnaire();
-             }
-           }
-         });
-       });
 
-     });
-     print(t);
-   return t;
+  static Future<Widget> getRep1() async {
+     dynamic email = await FlutterSession().get("email");
+
+   var dn=  Firestore.instance
+         .collection('users')
+         .getDocuments();
+   dn.then((querySnapshot) {
+       querySnapshot.documents.forEach((result) {
+
+         if (result.data['email'] == email) {
+           if(result.data['Reponse']==true) {
+
+            r=Fichierep();
+           }
+             else
+             r=Questionnaire();
+
+           }
+       });
+    });
+   await Future<Widget>.delayed(const Duration(seconds: 2));
+return r;
+
 
    }
 
@@ -96,7 +119,14 @@ void initState() {
 
     // TODO: implement initState
     super.initState();
-    getRep1();
+    getRep1().then((result){
+      print("result $result");
+      setState(() {
+        t=result;
+      });
+
+    });
+      print(t);
   }
    int currentIndex = 0;
   @override
@@ -112,7 +142,7 @@ void initState() {
               color: Colors.white,
             ),
             onPressed: () {
-              deconnecter();
+              deconnecter(context);
             },
           ),
         ],
@@ -153,4 +183,5 @@ void initState() {
       ),
     );
   }
+
 }
