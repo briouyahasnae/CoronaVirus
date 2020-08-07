@@ -96,20 +96,7 @@ deconnecter() async{
               return  Home();
             case NavBarItem.ALERT:
 
-              return FutureBuilder<Widget>(
-              future: getRep(),
-              builder: (BuildContext context, AsyncSnapshot<Widget> snapshot1) {
-                if (snapshot1.hasData) {
-                  return snapshot1.data;
-                }
-                else {
-                  return Center(
-                      child: CircularProgressIndicator()
-                  );
-                }
-              }
-              );
-
+             return Questionnaire();
             case NavBarItem.SETTINGS:
               return Maps();
           }

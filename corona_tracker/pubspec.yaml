@@ -38,6 +38,12 @@ dependencies:
   modal_progress_hud: ^0.1.3
   bottom_navy_bar: ^5.5.0
 
+  flutter_local_notifications: ^0.9.1+1
+  #Add below dependencies based on your requirement
+  rxdart: ^0.24.1
+  path_provider: ^1.6.11
+  http: ^0.12.1
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

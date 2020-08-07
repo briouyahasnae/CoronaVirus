@@ -2,6 +2,7 @@
 import 'package:corona_tracker/classes/Ip_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:corona_tracker/views/DestinationView.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,7 +26,10 @@ class _QuestionnaireState extends State<Questionnaire> {
   String selectedRadio4;
   bool _autoValidate = false;
   final firestoreInstance = Firestore.instance;
-  Position _currentPosition;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +38,22 @@ class _QuestionnaireState extends State<Questionnaire> {
     selectedRadio2 = null;
     selectedRadio3 = null;
     selectedRadio4 = null;
+    _getCurrentLocation();
+    initNotifications();
+  }
+  void initNotifications() async {
+    var initializationSettingsAndroid =
+    new AndroidInitializationSettings('ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings(
+        onDidReceiveLocalNotification: (i, string1, string2, string3) {
+          print("received notifications");
+        });
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: (string) {
+          print("selected notification");
+        });
   }
   void _getCurrentLocation() {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
@@ -80,7 +100,32 @@ class _QuestionnaireState extends State<Questionnaire> {
       selectedRadio4 = val;
     });
   }
+  void pasStep(int step){
+    setState(() {
+      if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
+        print("age ${_age.text}");
+        if (_age.text != '' && _weight.text != '' && _height.text != '') {
+          this._currentStep = this._currentStep + 1;
+        }
+      }
 
+      if (this._currentStep >= 1) {
+        this._currentStep = step;
+      }
+    });
+  }
+ Future<void> _onTap() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        '1', 'rrtutors', 'flutter snippets',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'rrtutors',
+        'Android & Flutter Tutorials', platformChannelSpecifics,
+        payload: 'item x');
+    print('hi');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,20 +146,27 @@ class _QuestionnaireState extends State<Questionnaire> {
                 steps: _mySteps(),
                 currentStep: this._currentStep,
                 onStepTapped: (step) {
-                  setState(() {
-                    this._currentStep = step;
-                  });
+
+                  pasStep(step);
                 },
 
                 onStepContinue: () {
                   setState(() {
-                    if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
-                      this._currentStep = this._currentStep + 1;
+                    if (this._currentStep >= 0 && !(this._currentStep>=1)) {
+                      print("age ${_age.text}");
+                      if(_age.text !='' && _weight.text !='' && _height.text!='' ){
+                        this._currentStep = this._currentStep + 1;
+                      }
+
                     }
-                    else {
+                    else if(this._currentStep>=1) {
                       //Logic to check if everything is completed
-                      Response(context);
-                      validateAnswers(context);
+                      if (selectedRadio != null && selectedRadio1 != null &&
+                          selectedRadio2 != null && selectedRadio3 != null &&
+                          selectedRadio4 != null) {
+                        Response(context);
+                        validateAnswers(context);
+                      }
                     }
                   });
                 },
@@ -128,9 +180,42 @@ class _QuestionnaireState extends State<Questionnaire> {
                     }
                   });
                 },
+                controlsBuilder: (BuildContext context, {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        _currentStep == 4 // this is the last step
+                            ?
+                        RaisedButton.icon(
+                          icon: Icon(Icons.create),
+
+                          label: Text('CREATE'),
+                          color: Colors.green,
+                        )
+                            : RaisedButton.icon(
+                          icon: Icon(Icons.navigate_next),
+                          onPressed: onStepContinue,
+                          label: Text('CONTINUE'),
+                          color: Colors.pink,
+                        ),
+                        FlatButton.icon(
+                          icon: Icon(Icons.delete_forever),
+                          label: const Text('CANCEL'),
+                          onPressed: onStepCancel,
+                        )
+                      ],
+                    ),
+                  );
+                },
+
 
               ),
             )));
+
+
   }
 
   List<Step> _mySteps() {
@@ -334,12 +419,6 @@ class _QuestionnaireState extends State<Questionnaire> {
     return _steps;
   }
 
-  int CountSelect(BuildContext context) {
-    int count = 0;
-    for (int i = 0; i < 6; i++) {
-
-    }
-  }
 
   Future<void> Response(BuildContext context) async {
     dynamic email = await FlutterSession().get("email");
@@ -384,7 +463,7 @@ class _QuestionnaireState extends State<Questionnaire> {
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
-          _getCurrentLocation();
+
           result.reference.updateData(<String,dynamic>{
             "malade" : true,
             "x":_currentPosition.latitude,
@@ -430,13 +509,13 @@ class _QuestionnaireState extends State<Questionnaire> {
               actions: <Widget>[
                 FlatButton(
                   child: Text('Ok'),
-                  onPressed: () {
+                  onPressed: () async {
                     selectedRadio = null;
                     selectedRadio1 = null;
                     selectedRadio2 = null;
                     selectedRadio3 = null;
                     selectedRadio4 = null;
-
+await _onTap();
 
                     Navigator.push(
                       context,
