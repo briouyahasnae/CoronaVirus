@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
    static  Widget r;
 
    static Widget t;
-
+  static String resultEmail;
 
    //list widget for bottom navigation
 
@@ -91,10 +91,12 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) => Login()
    )));
   }
-
-   Future<Widget> getRep1() async{
-     String  email  = await storage.read(key: "email");
-      Firestore.instance
+ Future<String> getEmail() async{
+   return await storage.read(key: 'email');
+}
+   static Future<Widget> getRep1() async{
+     final String  email  = resultEmail;
+     var dn= Firestore.instance
 
          .collection('users')
          .getDocuments();
@@ -145,18 +147,24 @@ void initState() {
                        valueNew = snapshot.data;
                      });
                    }
+
                    return null;
                  }}}
     );
-    getRep1();
 
+    getEmail().then((value) =>
+        setState(() {
+          resultEmail=value;
+
+        })
+    ).then((value) =>
     getRep1().then((result){
       print("result $result");
       setState(() {
         t=result;
       });
 
-    });
+    }));
       print(t);
 
   }
@@ -198,36 +206,6 @@ void initState() {
               title: Text('Home'),
               activeColor: Colors.red,
               textAlign: TextAlign.center,
-
-            onPressed: () {
-              deconnecter(context);
-            },
-          ),
-        ],
-        automaticallyImplyLeading: false,
-      ),
-      body:app[currentIndex],
-
-      bottomNavigationBar: BottomNavyBar(
-        selectedIndex: currentIndex,
-        showElevation: true,
-        itemCornerRadius: 8,
-        curve: Curves.easeInBack,
-        onItemSelected: (index) => setState(() {
-          currentIndex = index;
-        }),
-        items: [
-          BottomNavyBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-            activeColor: Colors.red,
-            textAlign: TextAlign.center,
-          ),
-
-          BottomNavyBarItem(
-            icon: Icon(Icons.list),
-            title: Text("Test covid 19"
-
             ),
 
             BottomNavyBarItem(
@@ -246,7 +224,7 @@ void initState() {
           ],
         ),
       );
-  
-  }
 
+  }
 }
+

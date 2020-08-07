@@ -13,10 +13,7 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
-<<<<<<< HEAD
-=======
 
->>>>>>> hasnae-dev
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
   final TextEditingController _weight = TextEditingController();
