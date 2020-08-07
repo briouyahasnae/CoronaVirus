@@ -22,9 +22,7 @@ class _HomeState extends State<Home> {
   dynamic email;
   IP_info ip_info;
   bool _isLoading=false;
-  getCode(){
 
-  }
     Future getData() async {
       try {
         const url = 'http://ip-api.com/json';

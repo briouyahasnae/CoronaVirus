@@ -13,6 +13,7 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
+
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
   final TextEditingController _weight = TextEditingController();
@@ -132,6 +133,7 @@ class _QuestionnaireState extends State<Questionnaire> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         backgroundColor: Colors.white,
 
         body: Container(
