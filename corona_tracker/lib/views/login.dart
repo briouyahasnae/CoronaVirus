@@ -69,9 +69,10 @@ class _LoginState extends State<Login> {
         visible=false;
       });
      setSession();
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
        context,
        MaterialPageRoute(builder: (context) => MyHomePage()),
+       ModalRoute.withName("homePage"),
       );
       break;
      }

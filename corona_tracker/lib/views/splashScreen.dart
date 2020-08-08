@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() async {
-    String value = await storage.read(key: "email");
+   String value = await storage.read(key: "email");
     Widget home ;
     if(value == null){
       home=new Signup();
@@ -41,21 +41,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+   var width= MediaQuery.of(context).size.width;
+    var height=MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
         height:MediaQuery.of(context).size.height ,
         color:backgroundColor ,
-        child :Padding(
-
-          padding: const EdgeInsets.only(top: 140),
-
-
-          child: SafeArea(
+        child: SafeArea(
+           child :Padding(
+             padding:  EdgeInsets.only(top: (height/4)+10),
               child: Column(
-
                 children:<Widget>[
-                  Text(
+                  Flexible(
+                 child: Text(
                       "Welcome",
                       style:TextStyle(
                         color:const Color(0xFF272343),
@@ -64,17 +63,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
                       )
                   ),
-
+        ),
                   Image.asset('assets/images/logo.png',
-                    width: 80,
-                    height: 80,
+                    width: width/4,
+                    height: height/4,
                   ),
-                  Padding(
-                      padding: const EdgeInsets.only(left:50,top:10),
+
+               Flexible(
+                  child:  Padding(
+                      padding:  EdgeInsets.only(left:width/7,top:height/50),
                       child:Row(
 
                           children:<Widget>[
-
                             Text(
                                 "Let's act against ",
                                 style:TextStyle(
@@ -93,27 +93,27 @@ class _SplashScreenState extends State<SplashScreen> {
 
                                 )
                             ),
-                          ]
+                         ]
                       )
     ),
-                Padding(
-                  padding: const EdgeInsets.only(top:40),
-                  child:Expanded(
-                  child: Column(
+                  ),
+                  Column(
+
                     children: <Widget>[
-                      CircularProgressIndicator(
-                        backgroundColor: Colors.amber
+                      Padding(
+                      padding:  EdgeInsets.only(top:height/10),
+                     child: CircularProgressIndicator(
+                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.amber),
+                        semanticsLabel: "Loading ...",
                       ),
 
-                    ],
+                      ) ],
                   ),
-                ),
-                ),
-              ],
+               ] ),
+
             ),
         ),
       ),
-    ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:corona_tracker/views/Login.dart';
 import 'package:corona_tracker/views/Maps.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
 import 'package:corona_tracker/views/bottom_navy_bar.dart';
@@ -175,7 +176,7 @@ void initState() {
           resultEmail=value;
 
         })
-    ).then((value) =>
+  ).then((value) =>
     getRep1().then((result){
       print("result $result");
       setState(() {
@@ -243,8 +244,7 @@ void initState() {
           ],
         ),
         ));
-  
-      );
+
   }
 }
 
