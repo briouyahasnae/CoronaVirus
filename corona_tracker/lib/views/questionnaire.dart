@@ -1,6 +1,6 @@
-
 import 'package:corona_tracker/classes/Ip_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
@@ -28,14 +28,16 @@ class _QuestionnaireState extends State<Questionnaire> {
   Position _currentPosition;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   new FlutterLocalNotificationsPlugin();
+
   void _getCurrentLocation() {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    final Geolocator geolocator = Geolocator()
+      ..forceAndroidLocationManager;
 
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-         _currentPosition = position;
+        _currentPosition = position;
       });
       print("x ${_currentPosition.latitude}");
       print("y ${_currentPosition.longitude}");
@@ -43,6 +45,7 @@ class _QuestionnaireState extends State<Questionnaire> {
       print(e);
     });
   }
+
 // Changes the selected value on 'onChanged' click on each radio button
   void setSelectedRadio(String val) {
     setState(() {
@@ -73,7 +76,8 @@ class _QuestionnaireState extends State<Questionnaire> {
       selectedRadio4 = val;
     });
   }
-  void pasStep(int step){
+
+  void pasStep(int step) {
     setState(() {
       if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
         print("age ${_age.text}");
@@ -86,25 +90,25 @@ class _QuestionnaireState extends State<Questionnaire> {
         this._currentStep = step;
       }
     });
-
   }
- void _onTapMalade() async {
 
-   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-       'your channel id', 'your channel name', 'your channel description',
-       importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-   var platformChannelSpecifics = NotificationDetails(
-       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-   await flutterLocalNotificationsPlugin.show(
-       0, 'result test', 'you should do corona test', platformChannelSpecifics,
-       payload: 'item x');
- print('hi');
+  void _onTapMalade() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'result test', 'you should do corona test', platformChannelSpecifics,
+        payload: 'item x');
+    print('hi');
   }
-  Future<void> _initNotifications() async{
 
-    var initializationSettingsAndroid = new AndroidInitializationSettings('logo');
-    print(initializationSettingsAndroid );
+  Future<void> _initNotifications() async {
+    var initializationSettingsAndroid = new AndroidInitializationSettings(
+        'logo');
+    print(initializationSettingsAndroid);
     var initializationSettingsIOS = new IOSInitializationSettings(
         onDidReceiveLocalNotification: (i, string1, string2, string3) {
           print("received notifications");
@@ -115,8 +119,8 @@ class _QuestionnaireState extends State<Questionnaire> {
         onSelectNotification: (string) {
           print("selected notification");
         });
-
   }
+
   @override
   void initState() {
     print("Initialize 1");
@@ -128,104 +132,105 @@ class _QuestionnaireState extends State<Questionnaire> {
     selectedRadio3 = null;
     selectedRadio4 = null;
     _getCurrentLocation();
-
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         backgroundColor: Colors.white,
 
-        body: Container(
-            height: MediaQuery
-                .of(context)
-                .size
-                .height,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            child: SafeArea(
-              child: Stepper(
+        body: LayoutBuilder(
+            builder: (BuildContext context, constraints) {
+              SafeArea(
+                  child: Stepper(
 
-                steps: _mySteps(),
-                currentStep: this._currentStep,
-                onStepTapped: (step) {
+                    steps: _mySteps(),
+                    currentStep: this._currentStep,
+                    onStepTapped: (step) {
+                      pasStep(step);
+                    },
 
-                  pasStep(step);
-                },
+                    onStepContinue: () {
+                      setState(() {
+                        if (this._currentStep >= 0 &&
+                            !(this._currentStep >= 1)) {
+                          print("age ${_age.text}");
+                          if (_age.text != '' && _weight.text != '' &&
+                              _height.text != '') {
+                            this._currentStep = this._currentStep + 1;
+                          }
+                        }
+                        else if (this._currentStep >= 1) {
+                          //Logic to check if everything is completed
+                          if (selectedRadio != null && selectedRadio1 != null &&
+                              selectedRadio2 != null &&
+                              selectedRadio3 != null &&
+                              selectedRadio4 != null) {
+                            Response(context);
+                            validateAnswers(context);
+                          }
+                        }
+                      });
+                    },
 
-                onStepContinue: () {
-                  setState(() {
-                    if (this._currentStep >= 0 && !(this._currentStep>=1)) {
-                      print("age ${_age.text}");
-                      if(_age.text !='' && _weight.text !='' && _height.text!='' ){
-                        this._currentStep = this._currentStep + 1;
-                      }
-
-                    }
-                    else if(this._currentStep>=1) {
-                      //Logic to check if everything is completed
-                      if (selectedRadio != null && selectedRadio1 != null &&
-                          selectedRadio2 != null && selectedRadio3 != null &&
-                          selectedRadio4 != null) {
-                        Response(context);
-                        validateAnswers(context);
-
-                      }
-                    }
-                  });
-                },
-
-                onStepCancel: () {
-                  setState(() {
-                    if (this._currentStep > 0) {
-                      this._currentStep = this._currentStep - 1;
-                    } else {
-                      this._currentStep = 0;
-                    }
-                  });
-                },
-                controlsBuilder: (BuildContext context, {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        _currentStep == 4 // this is the last step
-                            ?
-                        RaisedButton.icon(
-                          icon: Icon(Icons.create),
-                          label: Text('CREATE'),
-                          color: Colors.green,
-                        )
-                  : RaisedButton.icon(
-                          icon: Icon(Icons.navigate_next),
-                          onPressed: onStepContinue,
-                          label: Text('CONTINUE'),
-                          color: Colors.pink,
+                    onStepCancel: () {
+                      setState(() {
+                        if (this._currentStep > 0) {
+                          this._currentStep = this._currentStep - 1;
+                        } else {
+                          this._currentStep = 0;
+                        }
+                      });
+                    },
+                    controlsBuilder: (BuildContext context,
+                        {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            _currentStep == 4 // this is the last step
+                                ?
+                            RaisedButton.icon(
+                              icon: Icon(Icons.create),
+                              label: Text('CREATE'),
+                              color: Colors.green,
+                            )
+                                : RaisedButton.icon(
+                              icon: Icon(Icons.navigate_next),
+                              onPressed: onStepContinue,
+                              label: Text('CONTINUE'),
+                              color: Colors.pink,
+                            ),
+                            FlatButton.icon(
+                              icon: Icon(Icons.delete_forever),
+                              label: const Text('CANCEL'),
+                              onPressed: onStepCancel,
+                            )
+                          ],
                         ),
-                        FlatButton.icon(
-                          icon: Icon(Icons.delete_forever),
-                          label: const Text('CANCEL'),
-                          onPressed: onStepCancel,
-                        )
-                      ],
-                    ),
-                  );
-                },
+                      );
+                    },
 
 
-              ),
-            )));
-
-
+                  ));
+              if (constraints.maxWidth > 400) {
+                ListView.builder
+                  (
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      return _mySteps().add(value)
+                }
+                );
+              } else {
+                return _smallDisplay();
+              }
+            }));
   }
 
+
   List<Step> _mySteps() {
-    autovalidate:
-    _autoValidate;
     List<Step> _steps = [
       Step(
         title: Text('Personal informations'),
@@ -424,6 +429,30 @@ class _QuestionnaireState extends State<Questionnaire> {
     return _steps;
   }
 
+  Widget _smallDisplay() {
+    return Column(
+
+      children: <Widget>[
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Row 1"),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Row 2"),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
 
   Future<void> Response(BuildContext context) async {
     dynamic email = await FlutterSession().get("email");
@@ -445,82 +474,108 @@ class _QuestionnaireState extends State<Questionnaire> {
             "R5": selectedRadio4,
             "email": email
           });
-
-
     });
     var data1 = Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
-          result.reference.updateData(<String,dynamic>{
-            "Reponse" : true,
+          result.reference.updateData(<String, dynamic>{
+            "Reponse": true,
 
           });
         };
       });
-  });
-        }
-  Future<void> updateMalade(BuildContext context) async{
+    });
+  }
+
+  Future<void> updateMalade(BuildContext context) async {
     dynamic email = await FlutterSession().get("email");
-          Firestore.instance
+    Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
-
-          result.reference.updateData(<String,dynamic>{
-            "malade" : true,
-            "x":_currentPosition.latitude,
-            "y":_currentPosition.longitude
+          result.reference.updateData(<String, dynamic>{
+            "malade": true,
+            "x": _currentPosition.latitude,
+            "y": _currentPosition.longitude
           });
         }
       });
     });
   }
 
-   /* var data1 = Firestore.instance
+  /* var data1 = Firestore.instance
 
         .collection('users')
         .document(email).updateData("Response":true);*/
 
-    Future<void> validateAnswers(BuildContext context) {
-    int count=0;
-    if (selectedRadio=="yes") {
-        count++;
-      }
-    if (selectedRadio1=="yes") {
-        count++;
-      }
-    if (selectedRadio2=="yes") {
+  Future<void> validateAnswers(BuildContext context) {
+    int count = 0;
+    if (selectedRadio == "yes") {
       count++;
     }
-    if (selectedRadio4=="yes") {
+    if (selectedRadio1 == "yes") {
       count++;
     }
-    if (selectedRadio3=="yes") {
+    if (selectedRadio2 == "yes") {
+      count++;
+    }
+    if (selectedRadio4 == "yes") {
+      count++;
+    }
+    if (selectedRadio3 == "yes") {
       count++;
     }
     print(count);
-    if(count >=3){
-_onTapMalade();
+    if (count >= 3) {
+      _onTapMalade();
       updateMalade(context);
-        return showDialog<void>(
+      return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Warning'),
+            content: const Text('you should do test coronavirus'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () async {
+                  selectedRadio = null;
+                  selectedRadio1 = null;
+                  selectedRadio2 = null;
+                  selectedRadio3 = null;
+                  selectedRadio4 = null;
+
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    else {
+      return showDialog<void>(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Warning'),
-              content: const Text('you should do test coronavirus'),
+              content: const Text('You are okay'),
               actions: <Widget>[
                 FlatButton(
                   child: Text('Ok'),
-                  onPressed: () async {
+                  onPressed: () {
                     selectedRadio = null;
                     selectedRadio1 = null;
                     selectedRadio2 = null;
                     selectedRadio3 = null;
                     selectedRadio4 = null;
-
 
                     Navigator.push(
                       context,
@@ -530,40 +585,9 @@ _onTapMalade();
                 ),
               ],
             );
-          },
-        );
-      }
-      else {
-        return showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Warning'),
-                content: const Text('You are okay'),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('Ok'),
-                    onPressed: () {
-                      selectedRadio = null;
-                      selectedRadio1 = null;
-                      selectedRadio2 = null;
-                      selectedRadio3 = null;
-                      selectedRadio4 = null;
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>MyHomePage()),
-                      );
-                    },
-                  ),
-                ],
-              );
-            }
-        );
-      }
+          }
+      );
     }
   }
 
-
-
-
+}

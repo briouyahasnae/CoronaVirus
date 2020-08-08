@@ -56,7 +56,7 @@ class _FichierepState extends State<Fichierep> {
     return Scaffold(
      
       body: LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth > 500) {
+        if (constraints.maxWidth > 400) {
           return _bigDisplay();
         } else {
           return _smallDisplay();
