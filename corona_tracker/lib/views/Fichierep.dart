@@ -12,6 +12,8 @@ class Fichierep extends StatefulWidget {
 class _FichierepState extends State<Fichierep> {
   final storage = new FlutterSecureStorage();
   var _result;
+  double width;
+  double height;
   Future<dynamic> User;
   // ignore: always_specify_types
   Future<dynamic> getCurrentUser() async{
@@ -75,17 +77,46 @@ class _FichierepState extends State<Fichierep> {
     return Column(
     mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-            child: Row(
+        Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text("Age:${_result['Age']}",
+
+                Text("Age:",
                 style: TextStyle(
-                fontSize: 13.0, fontWeight: FontWeight.bold),),
+                fontSize: 14.0, fontWeight: FontWeight.bold,color: Colors.blueAccent),),
+                Text(_result['Age'].toString()),
+
               ],
-            )),
+            ),
+        SizedBox(height: height/30),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Height:",
+              style: TextStyle(
+                  fontSize: 14.0, fontWeight: FontWeight.bold,color: Colors.blueAccent
+
+              ),),
+            Text(_result['Height'].toString()),
+          ]),
 
 
+        SizedBox(height: height/30),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+
+            Text("Weight:",
+              style: TextStyle(
+                  fontSize: 14.0, fontWeight: FontWeight.bold,color:
+                  Colors.blueAccent),),
+            Text(_result['Weight'].toString()),
+
+          ],
+
+        ),
+
+        SizedBox(height: height/30),
      Row(
 
     mainAxisAlignment: MainAxisAlignment.center,
@@ -94,12 +125,13 @@ class _FichierepState extends State<Fichierep> {
     Text(
     'new or worsening cough :',
     style: TextStyle(
-    fontSize: 13.0, fontWeight: FontWeight.bold),
-    ),
+    fontSize: 14.0, fontWeight: FontWeight.bold,color:
+    _result['R1'].toString().toString()=='yes'? Colors.red: Colors.green),
+   ),
 
     Text(_result['R1'].toString()),
     ]),
-
+        SizedBox(height: height/30),
     Row(
 
     mainAxisAlignment: MainAxisAlignment.center,
@@ -108,11 +140,12 @@ class _FichierepState extends State<Fichierep> {
     Text(
     'difficulty breathing :',
     style: TextStyle(
-    fontSize: 13.0, fontWeight: FontWeight.bold),
+    fontSize: 14.0, fontWeight: FontWeight.bold,color: _result['R2'].toString().toString()=='yes'? Colors.red: Colors.green),
     ),
 
     Text(_result['R2'].toString()),
     ]),
+        SizedBox(height: height/30),
     Row(
     mainAxisAlignment: MainAxisAlignment.center,
 
@@ -120,11 +153,12 @@ class _FichierepState extends State<Fichierep> {
     Text(
     'new loss of smell or taste:',
     style: TextStyle(
-    fontSize: 13.0, fontWeight: FontWeight.bold),
+    fontSize: 14.0, fontWeight: FontWeight.bold,color: _result['R3'].toString().toString()=='yes'? Colors.red: Colors.green),
     ),
 
     Text(_result['R3'].toString()),
     ]),
+        SizedBox(height: height/30),
     Row(
     mainAxisAlignment: MainAxisAlignment.center,
 
@@ -132,18 +166,19 @@ class _FichierepState extends State<Fichierep> {
     Text(
     'fatigue or weakness:',
     style: TextStyle(
-    fontSize: 13.0, fontWeight: FontWeight.bold),
+    fontSize: 14.0, fontWeight: FontWeight.bold,color: _result['R4'].toString().toString()=='yes'? Colors.red: Colors.green),
     ),
 
     Text(_result['R4'].toString()),
     ]),
+        SizedBox(height: height/30),
     Row(
     mainAxisAlignment: MainAxisAlignment.center,
 
     children: <Widget>[
     Text('temperature >= 38°C :',
     style: TextStyle(
-    fontSize: 13.0, fontWeight: FontWeight.bold),
+    fontSize: 14.0, fontWeight: FontWeight.bold,color:_result['R5'].toString().toString()=='yes'? Colors.red: Colors.green),
     ),
 
     Text(_result['R5'].toString()),
@@ -158,6 +193,8 @@ void initState() {
   }
   @override
   Widget build(BuildContext context) {
+    width= MediaQuery.of(context).size.width;
+    height=MediaQuery.of(context).size.height;
     return Scaffold(
      
       body: LayoutBuilder(builder: (context, constraints) {
