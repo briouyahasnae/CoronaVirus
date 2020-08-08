@@ -161,7 +161,7 @@ class _LoginState extends State<Login> {
     borderSide:
     BorderSide(color: Colors.amber),
     ),
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    border: UnderlineInputBorder()),
     keyboardType: TextInputType.emailAddress,
     ),
     TextFormField(
@@ -183,40 +183,36 @@ class _LoginState extends State<Login> {
     ),
           SizedBox(height: height/20),
 
-     RaisedButton(
-    onPressed: () {
-     validate(context);
-     // stop the Progress indicator after 5 seconds
-    },
-    textColor: Colors.white,
-    padding: const EdgeInsets.all(0.0),
-    child: Container(
-    decoration: const BoxDecoration(
-    gradient: LinearGradient(
-    colors: <Color>[
-    Colors.blue,
-    Colors.green,
-    Colors.amber,
-    ],
-    ),
-    borderRadius: BorderRadius.all(
-    const Radius.circular(10.0),
-    ),
-    ),
+     InkWell(
+   onTap: () {
+   validate(context);
+   // stop the Progress indicator after 5 seconds
+   },
+   child: Container(
+   decoration: const BoxDecoration(
+   gradient: LinearGradient(
+   colors: <Color>[
+   Colors.blue,
+   Colors.green,
+   Colors.amber,
+   ],
+   ),
+   borderRadius: BorderRadius.all(
+   const Radius.circular(10.0),
+   ),
+   ),
 
-    padding: const EdgeInsets.all(10.0),
-    child:
-    Align(
-    alignment: Alignment.center,
-    child: const Text('Login', style: TextStyle(fontSize: 15)),
-    ),
-    )
-
+   padding: const EdgeInsets.all(10.0),
+   child:
+   Align(
+   alignment: Alignment.center,
+   child: const Text('Login', style: TextStyle(fontSize: 15)),
+   ),
 
     ),
 
 
-    ] ),
+   )] ),
 
     ),
     ]),

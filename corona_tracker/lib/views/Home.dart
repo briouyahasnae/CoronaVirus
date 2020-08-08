@@ -78,6 +78,8 @@ void initState() {
   }
   @override
   Widget build(BuildContext context) {
+    var width= MediaQuery.of(context).size.width;
+    var height=MediaQuery.of(context).size.height;
     return Scaffold(
     body: FutureBuilder(
     future: r,
@@ -96,13 +98,13 @@ void initState() {
           ListView(
               children: <Widget>[
                 SizedBox(
-                  height: 20,
+                  height: height/20,
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 4.0),
+                    padding: EdgeInsets.only(top:(height*0.05)-20),
                     child: ClayContainer(
                         color: Colors.white,
-                        height: 100,
+                        height: height*0.2,
                         borderRadius: 20,
                         depth: 30,
                         spread: 30,
@@ -116,11 +118,11 @@ void initState() {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Flag(code, width: 40, height: 40,),
+                              Flag(code, width: width/10, height: height/10),
                             ])
                     )),
                 SizedBox(
-                  height: 20,
+                  height: height/20,
                 ),
                 Center(
                   child:
@@ -138,15 +140,15 @@ void initState() {
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: height/20,
                 ),
                 Row(
                     children:
                     <Widget>[
                       ClayContainer(
                         color: Colors.white,
-                        height: 100,
-                        width: 150,
+                        height: height/5,
+                        width: (width/2)-10,
                         borderRadius: 20,
                         child:
                         Center(
@@ -154,7 +156,7 @@ void initState() {
                           Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 20,
+                                height: height/20,
                               ),
                               Text("Total cases",
                                 style: TextStyle(
@@ -164,7 +166,7 @@ void initState() {
                                 ),
                               ),
                               SizedBox(
-                                height: 20,
+                                height: height/20,
                               ),
                               Text(snapshot.data[0]["total_cases"]
                                   .toString(),
@@ -179,13 +181,13 @@ void initState() {
                         ),
 
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
+         SizedBox(
+           width: width/30,
+         ),
                       ClayContainer(
                         color: Colors.white,
-                        height: 100,
-                        width: 150,
+                        height: height/5,
+                        width: (width/2)-10,
                         borderRadius: 20,
                         child:
                         Center(
@@ -193,7 +195,7 @@ void initState() {
                           Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 20,
+                                height: height/20,
                               ),
                               Text("Total Deaths",
                                 style: TextStyle(
@@ -203,7 +205,7 @@ void initState() {
                                 ),
                               ),
                               SizedBox(
-                                height: 20,
+                                height: height/20,
                               ),
                               Text(
                                 snapshot.data[0]["total_deaths"].toString(),
@@ -220,14 +222,14 @@ void initState() {
                     ]
                 ),
                 SizedBox(
-                  height: 20,
+                  height: height/40,
                 ),
                 Row(
                   children: <Widget>[
                     ClayContainer(
                       color: Colors.white,
-                      height: 100,
-                      width: 150,
+                      height: height/5,
+                      width: (width/2)-10,
                       borderRadius: 20,
                       child:
                       Center(
@@ -235,7 +237,7 @@ void initState() {
                         Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 20,
+                              height: height/20,
                             ),
                             Text("Recoverd Cases",
                               style: TextStyle(
@@ -245,7 +247,7 @@ void initState() {
                               ),
                             ),
                             SizedBox(
-                              height: 20,
+                              height: height/20,
                             ),
                             Text(
                               snapshot.data[0]["total_recovered"].toString(),
@@ -262,7 +264,7 @@ void initState() {
                   ],
                 ),
                 SizedBox(
-                  height: 20,
+                  height: height/40,
                 ),
                 Text(
                   "Active Cases",
@@ -275,14 +277,14 @@ void initState() {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: height/40,
                 ),
                 Row(
                     children: <Widget>[
                       ClayContainer(
                         color: Colors.white,
-                        height: 100,
-                        width: 100,
+                        height:( height/5)-10,
+                        width:  width/3,
                         borderRadius: 75,
                         curveType: CurveType.concave,
                         child: Column(children: <Widget>[
@@ -311,7 +313,7 @@ void initState() {
                     ]
                 ),
                 SizedBox(
-                  height: 20,
+                  height: height/40,
                 ),
                 Text(
                   "New cases",
@@ -324,14 +326,14 @@ void initState() {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: height/50,
                 ),
                 Row(
                   children: <Widget>[
                     ClayContainer(
                       color: Colors.white,
-                      height: 100,
-                      width: 100,
+                      height:( height/5.5)-10,
+                      width:  (width/3.5)+1,
                       borderRadius: 50,
                       curveType: CurveType.concave,
                       child: Column(children: <Widget>[
@@ -358,12 +360,12 @@ void initState() {
 
                     ),
                     SizedBox(
-                      width: 10,
+                      width: width*0.06,
                     ),
                     ClayContainer(
                       color: Colors.white,
-                      height: 100,
-                      width: 100,
+                      height:( height/5.5)-10,
+                      width:  (width/3.5)+1,
                       borderRadius: 60,
                       curveType: CurveType.concave,
                       child: Column(children: <Widget>[
@@ -388,12 +390,12 @@ void initState() {
                       ),
                     ),
                     SizedBox(
-                      width: 10,
+                      width: width*0.06,
                     ),
                     ClayContainer(
                       color: Colors.white,
-                      height: 100,
-                      width: 100,
+                      height:( height/5.5)-10,
+                      width:  (width/3.5)+1,
                       borderRadius: 75,
                       curveType: CurveType.concave,
                       child: Column(children: <Widget>[
