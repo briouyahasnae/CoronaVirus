@@ -1,10 +1,12 @@
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:corona_tracker/main.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class Questionnaire extends StatefulWidget {
   @override
   _QuestionnaireState createState() => _QuestionnaireState();
@@ -12,7 +14,7 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
-final storage =new FlutterSecureStorage();
+  final storage = new FlutterSecureStorage();
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
   final TextEditingController _weight = TextEditingController();
@@ -27,8 +29,10 @@ final storage =new FlutterSecureStorage();
   Position _currentPosition;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   new FlutterLocalNotificationsPlugin();
+
   void _getCurrentLocation() {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    final Geolocator geolocator = Geolocator()
+      ..forceAndroidLocationManager;
 
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
@@ -42,6 +46,7 @@ final storage =new FlutterSecureStorage();
       print(e);
     });
   }
+
 // Changes the selected value on 'onChanged' click on each radio button
   void setSelectedRadio(String val) {
     setState(() {
@@ -72,7 +77,8 @@ final storage =new FlutterSecureStorage();
       selectedRadio4 = val;
     });
   }
-  void pasStep(int step){
+
+  void pasStep(int step) {
     setState(() {
       if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
         print("age ${_age.text}");
@@ -85,10 +91,9 @@ final storage =new FlutterSecureStorage();
         this._currentStep = step;
       }
     });
-
   }
-  void _onTapMalade() async {
 
+  void _onTapMalade() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
@@ -100,10 +105,11 @@ final storage =new FlutterSecureStorage();
         payload: 'item x');
     print('hi');
   }
-  Future<void> _initNotifications() async{
 
-    var initializationSettingsAndroid = new AndroidInitializationSettings('logo');
-    print(initializationSettingsAndroid );
+  Future<void> _initNotifications() async {
+    var initializationSettingsAndroid = new AndroidInitializationSettings(
+        'logo');
+    print(initializationSettingsAndroid);
     var initializationSettingsIOS = new IOSInitializationSettings(
         onDidReceiveLocalNotification: (i, string1, string2, string3) {
           print("received notifications");
@@ -114,8 +120,8 @@ final storage =new FlutterSecureStorage();
         onSelectNotification: (string) {
           print("selected notification");
         });
-
   }
+
   @override
   void initState() {
     print("Initialize 1");
@@ -127,8 +133,9 @@ final storage =new FlutterSecureStorage();
     selectedRadio3 = null;
     selectedRadio4 = null;
     _getCurrentLocation();
-
   }
+
+
   @override
   Widget build(BuildContext context) {
    var height= MediaQuery
@@ -140,8 +147,8 @@ final storage =new FlutterSecureStorage();
         .size
         .width;
     return Scaffold(
-
         backgroundColor: Colors.white,
+
 
         body: Container(
             height: MediaQuery
@@ -235,14 +242,86 @@ final storage =new FlutterSecureStorage();
                 },
 
 
-              ),
-            )));
+                    onStepContinue: () {
+                      setState(() {
+                        if (this._currentStep >= 0 &&
+                            !(this._currentStep >= 1)) {
+                          print("age ${_age.text}");
+                          if (_age.text != '' && _weight.text != '' &&
+                              _height.text != '') {
+                            this._currentStep = this._currentStep + 1;
+                          }
+                        }
+                        else if (this._currentStep >= 1) {
+                          //Logic to check if everything is completed
+                          if (selectedRadio != null && selectedRadio1 != null &&
+                              selectedRadio2 != null &&
+                              selectedRadio3 != null &&
+                              selectedRadio4 != null) {
+                            Response(context);
+                            validateAnswers(context);
+                          }
+                        }
+                      });
+                    },
+
+                    onStepCancel: () {
+                      setState(() {
+                        if (this._currentStep > 0) {
+                          this._currentStep = this._currentStep - 1;
+                        } else {
+                          this._currentStep = 0;
+                        }
+                      });
+                    },
+                    controlsBuilder: (BuildContext context,
+                        {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            _currentStep == 4 // this is the last step
+                                ?
+                            RaisedButton.icon(
+                              icon: Icon(Icons.create),
+                              label: Text('CREATE'),
+                              color: Colors.green,
+                            )
+                                : RaisedButton.icon(
+                              icon: Icon(Icons.navigate_next),
+                              onPressed: onStepContinue,
+                              label: Text('CONTINUE'),
+                              color: Colors.pink,
+                            ),
+                            FlatButton.icon(
+                              icon: Icon(Icons.delete_forever),
+                              label: const Text('CANCEL'),
+                              onPressed: onStepCancel,
+                            )
+                          ],
+                        ),
+                      );
+                    },
 
 
+                  ));
+              if (constraints.maxWidth > 400) {
+                ListView.builder
+                  (
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      //return _mySteps().add(value)
+                }
+                );
+              } else {
+                return _smallDisplay();
+              }
+            }));
   }
 
+
   List<Step> _mySteps() {
-    _autoValidate;
 
     List<Step> _steps = [
 
@@ -448,6 +527,30 @@ final storage =new FlutterSecureStorage();
     return _steps;
   }
 
+  Widget _smallDisplay() {
+    return Column(
+
+      children: <Widget>[
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Row 1"),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Row 2"),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
 
   Future<void> Response(BuildContext context) async {
     dynamic email = await storage.read(key :"email");
@@ -469,16 +572,14 @@ final storage =new FlutterSecureStorage();
             "R5": selectedRadio4,
             "email": email
           });
-
-
     });
     var data1 = Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
-          result.reference.updateData(<String,dynamic>{
-            "Reponse" : true,
+          result.reference.updateData(<String, dynamic>{
+            "Reponse": true,
 
           });
         };
@@ -493,11 +594,10 @@ final storage =new FlutterSecureStorage();
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
         if (result.data['email'] == email) {
-
-          result.reference.updateData(<String,dynamic>{
-            "malade" : true,
-            "x":_currentPosition.latitude,
-            "y":_currentPosition.longitude
+          result.reference.updateData(<String, dynamic>{
+            "malade": true,
+            "x": _currentPosition.latitude,
+            "y": _currentPosition.longitude
           });
         }
       });
@@ -510,24 +610,24 @@ final storage =new FlutterSecureStorage();
         .document(email).updateData("Response":true);*/
 
   Future<void> validateAnswers(BuildContext context) {
-    int count=0;
-    if (selectedRadio=="yes") {
+    int count = 0;
+    if (selectedRadio == "yes") {
       count++;
     }
-    if (selectedRadio1=="yes") {
+    if (selectedRadio1 == "yes") {
       count++;
     }
-    if (selectedRadio2=="yes") {
+    if (selectedRadio2 == "yes") {
       count++;
     }
-    if (selectedRadio4=="yes") {
+    if (selectedRadio4 == "yes") {
       count++;
     }
-    if (selectedRadio3=="yes") {
+    if (selectedRadio3 == "yes") {
       count++;
     }
     print(count);
-    if(count >=3){
+    if (count >= 3) {
       _onTapMalade();
       updateMalade(context);
       return showDialog<void>(
@@ -587,4 +687,4 @@ final storage =new FlutterSecureStorage();
       );
     }
   }
-}
+
