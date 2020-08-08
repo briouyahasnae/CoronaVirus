@@ -48,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+ static var fichierQuest;
   DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
 
@@ -61,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> app =[
     Home(),FutureBuilder(
 
-      future: getRep1(),
+      future:getRep1(),
       builder: (BuildContext context,AsyncSnapshot<Widget> snapshot){
 
    switch (snapshot.connectionState) {
@@ -145,7 +146,6 @@ return r;
 String valueNew;
 @override
 void initState() {
-
     // TODO: implement initState
     super.initState();
 
@@ -177,15 +177,8 @@ void initState() {
 
         })
   ).then((value) =>
-    getRep1().then((result){
-      print("result $result");
-      setState(() {
-        t=result;
-      });
 
-    }));
-      print(t);
-
+   fichierQuest= getRep1());
   }
    int currentIndex = 0;
   @override
