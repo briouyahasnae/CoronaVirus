@@ -312,9 +312,10 @@ class _SignupState extends State<Signup> {
                       Text("if you already have an account"),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(builder: (context) => Login()),
+                            ModalRoute.withName("login"),
                           );
                         },
                         child: Text(
