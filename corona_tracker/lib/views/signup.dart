@@ -133,12 +133,14 @@ class _SignupState extends State<Signup> {
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    var width= MediaQuery.of(context).size.width;
+    var height=MediaQuery.of(context).size.height;
     return Scaffold(
       body: ModalProgressHUD(
         inAsyncCall: visible,
         color: backgroundColor,
         child: Padding(
-          padding: const EdgeInsets.only(top: 20),
+          padding: EdgeInsets.only(top: height/20),
           child: SafeArea(
               child: Center(
                   child: ListView(children: <Widget>[
@@ -152,11 +154,13 @@ class _SignupState extends State<Signup> {
                     fontWeight: FontWeight.bold,
                   )),
             ),
+           SizedBox(height: height/15),
             Form(
               key: formKey,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Column(children: <Widget>[
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
                   TextFormField(
                     style: TextStyle(color: const Color(0xFF272343)),
                     validator: (value) =>
@@ -275,10 +279,8 @@ class _SignupState extends State<Signup> {
                      },
                    );
                  }),*/
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
-                    child: RaisedButton(
+                      SizedBox(height: height/20),
+                      RaisedButton(
                         onPressed: () {
                           validate(context);
                         },
@@ -305,10 +307,11 @@ class _SignupState extends State<Signup> {
                                 style: TextStyle(fontSize: 15)),
                           ),
                         )),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 48, top: 20.0),
-                    child: Row(children: <Widget>[
+                      SizedBox(height: height/25),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
                       Text("if you already have an account"),
                       GestureDetector(
                         onTap: () {
@@ -327,13 +330,11 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ]),
-                  ),
-                ]),
+                  ]),
+            )]),
               ),
             )
-          ]))),
-        ),
-      ),
-    );
+          ))
+        );
   }
 }

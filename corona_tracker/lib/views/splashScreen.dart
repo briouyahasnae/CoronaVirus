@@ -45,13 +45,11 @@ class _SplashScreenState extends State<SplashScreen> {
     var height=MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height:MediaQuery.of(context).size.height ,
         color:backgroundColor ,
         child: SafeArea(
-           child :Padding(
-             padding:  EdgeInsets.only(top: (height/4)+10),
               child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,//Center Row contents horizontally,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                 children:<Widget>[
                   Flexible(
                  child: Text(
@@ -70,10 +68,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
 
                Flexible(
-                  child:  Padding(
-                      padding:  EdgeInsets.only(left:width/7,top:height/50),
                       child:Row(
-
+                          mainAxisAlignment: MainAxisAlignment.center ,//Center Row contents horizontally,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children:<Widget>[
                             Text(
                                 "Let's act against ",
@@ -96,9 +93,10 @@ class _SplashScreenState extends State<SplashScreen> {
                          ]
                       )
     ),
-                  ),
-                  Column(
 
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center ,//Center Row contents horizontally,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Padding(
                       padding:  EdgeInsets.only(top:height/10),
@@ -113,7 +111,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
             ),
         ),
-      ),
-    );
+      );
   }
 }
