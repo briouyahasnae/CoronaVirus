@@ -35,7 +35,7 @@ class _QuestionnaireState extends State<Questionnaire> {
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
       setState(() {
-         _currentPosition = position;
+        _currentPosition = position;
       });
       print("x ${_currentPosition.latitude}");
       print("y ${_currentPosition.longitude}");
@@ -88,18 +88,18 @@ class _QuestionnaireState extends State<Questionnaire> {
     });
 
   }
- void _onTapMalade() async {
+  void _onTapMalade() async {
 
-   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-       'your channel id', 'your channel name', 'your channel description',
-       importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-   var platformChannelSpecifics = NotificationDetails(
-       androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-   await flutterLocalNotificationsPlugin.show(
-       0, 'result test', 'you should do corona test', platformChannelSpecifics,
-       payload: 'item x');
- print('hi');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'result test', 'you should do corona test', platformChannelSpecifics,
+        payload: 'item x');
+    print('hi');
   }
   Future<void> _initNotifications() async{
 
@@ -132,6 +132,14 @@ class _QuestionnaireState extends State<Questionnaire> {
   }
   @override
   Widget build(BuildContext context) {
+   var height= MediaQuery
+        .of(context)
+        .size
+        .height;
+   var width=MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
 
         backgroundColor: Colors.white,
@@ -141,18 +149,16 @@ class _QuestionnaireState extends State<Questionnaire> {
                 .of(context)
                 .size
                 .height,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width:MediaQuery.of(context).size.width,
             child: SafeArea(
               child: Stepper(
-
                 steps: _mySteps(),
+
                 currentStep: this._currentStep,
                 onStepTapped: (step) {
 
                   pasStep(step);
+
                 },
 
                 onStepContinue: () {
@@ -190,28 +196,41 @@ class _QuestionnaireState extends State<Questionnaire> {
                   return Padding(
                     padding: const EdgeInsets.only(top: 16.0),
                     child: Row(
-                      mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         _currentStep == 4 // this is the last step
                             ?
-                        RaisedButton.icon(
+                    ButtonTheme(
+                        minWidth: width/10,
+                        height: height/10,
+                        child:RaisedButton.icon(
                           icon: Icon(Icons.create),
                           label: Text('CREATE'),
                           color: Colors.green,
-                        )
-                  : RaisedButton.icon(
+                          onPressed: (){},
+
+                        ))
+                            :
+                            Flexible(
+
+                    child:ButtonTheme(
+                    height: height/15,
+                    child:RaisedButton.icon(
                           icon: Icon(Icons.navigate_next),
                           onPressed: onStepContinue,
-                          label: Text('CONTINUE'),
+                          label:Flexible(child: Text('CONTINUE',style: TextStyle(fontSize: 11))),
                           color: Colors.pink,
-                        ),
+                        ))),
+                  Flexible(
+                 child: ButtonTheme(
+                  height: height/15,
+                  child:
                         FlatButton.icon(
                           icon: Icon(Icons.delete_forever),
-                          label: const Text('CANCEL'),
+                          label: Text('CANCEL',style: TextStyle(fontSize: 11),),
                           onPressed: onStepCancel,
                         )
-                      ],
+                  ) )],
                     ),
                   );
                 },
@@ -224,12 +243,12 @@ class _QuestionnaireState extends State<Questionnaire> {
   }
 
   List<Step> _mySteps() {
-    autovalidate:
     _autoValidate;
+
     List<Step> _steps = [
+
       Step(
         title: Text('Personal informations'),
-
         content: Column(
           children: <Widget>[
             TextFormField(
@@ -254,21 +273,19 @@ class _QuestionnaireState extends State<Questionnaire> {
       Step(
         title: Text('Symptoms'),
         content: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
 
             children: <Widget>[
-              Row(
-
-                  mainAxisAlignment: MainAxisAlignment.center,
-
+             Row(
                   children: <Widget>[
-                    Text(
-                      'new or worsening cough :',
+                    Flexible(
+                    child:Text(
+                      'new or worsening cough',
                       style: TextStyle(
                           fontSize: 13.0, fontWeight: FontWeight.bold),
                     ),
-
-                    Radio(
+                    ),
+      Flexible(
+          child:Radio(
                       value: "yes",
                       groupValue: selectedRadio1,
                       activeColor: Colors.green,
@@ -276,8 +293,8 @@ class _QuestionnaireState extends State<Questionnaire> {
                         print("Radio $val1");
                         setSelectedRadio1(val1);
                       },
-                    ),
-                    Text('Yes'),
+                    )),
+                  Text('Yes'),
                     Radio(
                       value: "no",
                       groupValue: selectedRadio1,
@@ -289,18 +306,19 @@ class _QuestionnaireState extends State<Questionnaire> {
                     ),
                     Text('No'),
                   ]),
+              SizedBox(height:10),
               Row(
 
-                  mainAxisAlignment: MainAxisAlignment.center,
-
                   children: <Widget>[
-                    Text(
-                      'difficulty breathing :',
+                    Flexible(
+                  child:  Text(
+                      'difficulty breathing',
                       style: TextStyle(
                           fontSize: 13.0, fontWeight: FontWeight.bold),
                     ),
-
-                    Radio(
+                    ),
+                   Flexible(
+                   child:  Radio(
                       value: "yes",
                       groupValue: selectedRadio,
                       activeColor: Colors.green,
@@ -308,8 +326,8 @@ class _QuestionnaireState extends State<Questionnaire> {
                         print("Radio $val");
                         setSelectedRadio(val);
                       },
-                    ),
-                    Text('Yes'),
+                    )),
+                   Text('Yes'),
                     Radio(
                       value: "no",
                       groupValue: selectedRadio,
@@ -322,17 +340,20 @@ class _QuestionnaireState extends State<Questionnaire> {
                     Text('No'),
 
                   ]),
+              SizedBox(height:10),
+
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
 
                   children: <Widget>[
-                    Text(
-                      'new loss of smell or taste:',
+                    Flexible(
+                    child:Text(
+                      'new loss of smell or taste',
                       style: TextStyle(
                           fontSize: 13.0, fontWeight: FontWeight.bold),
-                    ),
+                    )),
 
-                    Radio(
+    Flexible(
+    child: Radio(
                       value: "yes",
                       groupValue: selectedRadio2,
                       activeColor: Colors.green,
@@ -340,8 +361,8 @@ class _QuestionnaireState extends State<Questionnaire> {
                         print("Radio $val");
                         setSelectedRadio2(val);
                       },
-                    ),
-                    Text('Yes'),
+                    )),
+                   Text('Yes'),
                     Radio(
                       value: "no",
                       groupValue: selectedRadio2,
@@ -353,17 +374,18 @@ class _QuestionnaireState extends State<Questionnaire> {
                     ),
                     Text('No'),
                   ]),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              SizedBox(height:10),
 
+              Row(
                   children: <Widget>[
-                    Text(
-                      'fatigue or weakness:',
+                    Flexible(
+                   child: Text(
+                      'fatigue or weakness',
                       style: TextStyle(
                           fontSize: 13.0, fontWeight: FontWeight.bold),
-                    ),
-
-                    Radio(
+                    )),
+                  Flexible(
+                    child:Radio(
                       value: "yes",
                       groupValue: selectedRadio3,
                       activeColor: Colors.green,
@@ -371,7 +393,8 @@ class _QuestionnaireState extends State<Questionnaire> {
                         print("Radio $val");
                         setSelectedRadio3(val);
                       },
-                    ),
+                    )),
+
                     Text('Yes'),
                     Radio(
                       value: "no",
@@ -382,17 +405,19 @@ class _QuestionnaireState extends State<Questionnaire> {
                         setSelectedRadio3(val);
                       },
                     ),
+
                     Text('No'),
                   ]),
+              SizedBox(height:10),
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-
                   children: <Widget>[
-                    Text('temperature >= 38°C :',
+                    Flexible(
+                    child:Text('temperature +38°C',
                       style: TextStyle(
                           fontSize: 13.0, fontWeight: FontWeight.bold),
-                    ),
-
+                    )),
+    Flexible(
+    child:
                     Radio(
                       value: "yes",
                       groupValue: selectedRadio4,
@@ -401,7 +426,7 @@ class _QuestionnaireState extends State<Questionnaire> {
                         print("Radio $val");
                         setSelectedRadio4(val);
                       },
-                    ),
+                    )),
                     Text('Yes'),
                     Radio(
                       value: "no",
@@ -459,11 +484,11 @@ class _QuestionnaireState extends State<Questionnaire> {
           });
         };
       });
-  });
-        }
+    });
+  }
   Future<void> updateMalade(BuildContext context) async{
     dynamic email = await FlutterSession().get("email");
-          Firestore.instance
+    Firestore.instance
         .collection('users')
         .getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
@@ -479,19 +504,19 @@ class _QuestionnaireState extends State<Questionnaire> {
     });
   }
 
-   /* var data1 = Firestore.instance
+  /* var data1 = Firestore.instance
 
         .collection('users')
         .document(email).updateData("Response":true);*/
 
-    Future<void> validateAnswers(BuildContext context) {
+  Future<void> validateAnswers(BuildContext context) {
     int count=0;
     if (selectedRadio=="yes") {
-        count++;
-      }
+      count++;
+    }
     if (selectedRadio1=="yes") {
-        count++;
-      }
+      count++;
+    }
     if (selectedRadio2=="yes") {
       count++;
     }
@@ -503,67 +528,63 @@ class _QuestionnaireState extends State<Questionnaire> {
     }
     print(count);
     if(count >=3){
-_onTapMalade();
+      _onTapMalade();
       updateMalade(context);
-        return showDialog<void>(
+      return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Warning'),
+            content: const Text('you should do test coronavirus'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () async {
+                  selectedRadio = null;
+                  selectedRadio1 = null;
+                  selectedRadio2 = null;
+                  selectedRadio3 = null;
+                  selectedRadio4 = null;
+
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    else {
+      return showDialog<void>(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Warning'),
-              content: const Text('you should do test coronavirus'),
+              content: const Text('You are okay'),
               actions: <Widget>[
                 FlatButton(
                   child: Text('Ok'),
-                  onPressed: () async {
+                  onPressed: () {
                     selectedRadio = null;
                     selectedRadio1 = null;
                     selectedRadio2 = null;
                     selectedRadio3 = null;
                     selectedRadio4 = null;
 
-
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
+                      MaterialPageRoute(builder: (context) =>MyHomePage()),
                     );
                   },
                 ),
               ],
             );
-          },
-        );
-      }
-      else {
-        return showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Warning'),
-                content: const Text('You are okay'),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('Ok'),
-                    onPressed: () {
-                      selectedRadio = null;
-                      selectedRadio1 = null;
-                      selectedRadio2 = null;
-                      selectedRadio3 = null;
-                      selectedRadio4 = null;
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>MyHomePage()),
-                      );
-                    },
-                  ),
-                ],
-              );
-            }
-        );
-      }
+          }
+      );
     }
   }
-
-
-
-
+}
