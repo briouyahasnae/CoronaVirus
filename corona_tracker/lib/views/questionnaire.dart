@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_session/flutter_session.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:corona_tracker/main.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class Questionnaire extends StatefulWidget {
   @override
   _QuestionnaireState createState() => _QuestionnaireState();
@@ -13,7 +14,7 @@ class Questionnaire extends StatefulWidget {
 
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
-
+  final storage = new FlutterSecureStorage();
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
   final TextEditingController _weight = TextEditingController();
@@ -220,7 +221,7 @@ class _QuestionnaireState extends State<Questionnaire> {
                 ListView.builder
                   (
                     itemBuilder: (BuildContext ctxt, int index) {
-                      return _mySteps().add(value)
+                      //return _mySteps().add(value)
                 }
                 );
               } else {
@@ -455,7 +456,7 @@ class _QuestionnaireState extends State<Questionnaire> {
 
 
   Future<void> Response(BuildContext context) async {
-    dynamic email = await FlutterSession().get("email");
+    dynamic email =await storage.read(key: 'email');
     print(email);
 
     var data = Firestore.instance
