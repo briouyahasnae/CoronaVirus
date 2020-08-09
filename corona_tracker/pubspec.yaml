@@ -39,6 +39,7 @@ dependencies:
   flutter_secure_storage: ^3.3.3
   flutter_local_notifications: ^0.9.1+1
   fluttertoast: ^7.0.2
+  custom_navigator: ^0.2.0
   #Add below dependencies based on your requirement
   rxdart: ^0.24.1
   path_provider: ^1.6.11

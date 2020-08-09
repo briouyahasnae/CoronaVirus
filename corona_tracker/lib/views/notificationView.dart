@@ -45,7 +45,7 @@ class Shownotification extends StatelessWidget {
                 SizedBox(
                   height:height/40,
                 ),
-                Text("4-Where your mask"),
+                Text("4-Wear your mask"),
                 SizedBox(
                   height:height/40,
                 ),
