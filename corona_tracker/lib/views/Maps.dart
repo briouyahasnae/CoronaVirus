@@ -79,8 +79,8 @@ class _Maps extends State<Maps> {
         if (result.data['email'] != value) {
           if (result.data['malade'] == true) {
             setState(() {
-           Circle circle=   Circle( //radius marker
-                circleId: CircleId("current${count}"),
+              Circle circle=   Circle( //radius marker
+                  circleId: CircleId("current${count}"),
                   center: LatLng(result.data['x'], result.data['y']),
                   radius: 4000,
                   fillColor: Colors.green.withOpacity(0.5),
@@ -88,7 +88,7 @@ class _Maps extends State<Maps> {
                   strokeWidth: 3,
                   visible: true
               );
-            _circle["current index $count"]=circle;
+              _circle["current index $count"]=circle;
             });
           }
 
@@ -106,16 +106,16 @@ class _Maps extends State<Maps> {
   }
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 5.0,
-          ),
-          markers: _markers.values.toSet(),
-          circles:Set<Circle>.of(_circle.values),
+    return Scaffold(
+      body: GoogleMap(
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: CameraPosition(
+          target: _center,
+          zoom: 5.0,
         ),
+        markers: _markers.values.toSet(),
+        circles:Set<Circle>.of(_circle.values),
+      ),
     );
   }
 }

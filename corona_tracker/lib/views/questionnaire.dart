@@ -1,9 +1,11 @@
+import 'package:corona_tracker/views/navigation2.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:corona_tracker/views/notificationView.dart';
 import 'package:corona_tracker/main.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -15,6 +17,8 @@ class Questionnaire extends StatefulWidget {
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
   final MyHomePage homee=new MyHomePage();
+  GlobalKey<FormState> _formKey =  GlobalKey<FormState>();
+  List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
   final storage = new FlutterSecureStorage();
   final TextEditingController _age = TextEditingController();
   final TextEditingController _height = TextEditingController();
@@ -83,8 +87,10 @@ class _QuestionnaireState extends State<Questionnaire> {
     setState(() {
       if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
         print("age ${_age.text}");
-        if (_age.text != '' && _weight.text != '' && _height.text != '') {
-          this._currentStep = this._currentStep + 1;
+        if(formKeys[_currentStep].currentState.validate()) {
+          if (_age.text != '' && _weight.text != '' && _height.text != '') {
+            this._currentStep = this._currentStep + 1;
+          }
         }
       }
 
@@ -104,7 +110,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     await flutterLocalNotificationsPlugin.show(
         0, 'result test', 'you should do corona test', platformChannelSpecifics,
         payload: 'item x');
-    print('hi');
+
   }
 
   Future<void> _initNotifications() async {
@@ -118,8 +124,12 @@ class _QuestionnaireState extends State<Questionnaire> {
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        // ignore: missing_return
         onSelectNotification: (string) {
-          print("selected notification");
+           Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Shownotification()),
+          );
         });
   }
 
@@ -139,7 +149,10 @@ class _QuestionnaireState extends State<Questionnaire> {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery
+
+
+   var height= MediaQuery
+
         .of(context)
         .size
         .height;
@@ -161,7 +174,11 @@ class _QuestionnaireState extends State<Questionnaire> {
                 .size
                 .width,
             child: SafeArea(
-                child: Stepper(
+                child:  Form(
+                  key: _formKey,
+                  child:  ListView(
+                      children: <Widget>[
+                 Stepper(
                   steps: _mySteps(),
 
                   currentStep: this._currentStep,
@@ -171,23 +188,28 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                   onStepContinue: () {
                     setState(() {
-                      if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
-                        print("age ${_age.text}");
-                        if (_age.text != '' && _weight.text != '' &&
-                            _height.text != '') {
-                          this._currentStep = this._currentStep + 1;
+                      if(formKeys[_currentStep].currentState.validate()){
+                        if (this._currentStep >= 0 && !(this._currentStep >=
+                            1)) {
+                          print("age ${_age.text}");
+                          if (_age.text != '' && _weight.text != '' &&
+                              _height.text != '') {
+                            if(_formKey.currentState.validate()) {
+                            this._currentStep = this._currentStep + 1;
+                            }
+                          }
                         }
-                      }
-                      else if (this._currentStep >= 1) {
-                        //Logic to check if everything is completed
-                        if (selectedRadio != null && selectedRadio1 != null &&
-                            selectedRadio2 != null && selectedRadio3 != null &&
-                            selectedRadio4 != null) {
-                          Response(context);
-                          validateAnswers(context);
+                        else if (this._currentStep >= 1) {
+                          //Logic to check if everything is completed
+                          if (selectedRadio != null && selectedRadio1 != null &&
+                              selectedRadio2 != null &&
+                              selectedRadio3 != null &&
+                              selectedRadio4 != null) {
+                            Response(context);
+                            validateAnswers(context);
+                          }
                         }
-                      }
-                    });
+                      }});
                   },
 
                   onStepCancel: () {
@@ -196,9 +218,14 @@ class _QuestionnaireState extends State<Questionnaire> {
                         this._currentStep = this._currentStep - 1;
                       } else {
                         this._currentStep = 0;
+
+                        _age.clear();
+                        _height.clear();
+                        _weight.clear();
                       }
                     });
                   },
+
                   controlsBuilder: (BuildContext context,
                       {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
                     return Padding(
@@ -247,7 +274,7 @@ class _QuestionnaireState extends State<Questionnaire> {
                   },
 
 
-                ))));
+                )])))));
   }
 
 
@@ -256,30 +283,67 @@ class _QuestionnaireState extends State<Questionnaire> {
 
       Step(
         title: Text('Personal informations'),
-        content: Column(
+          state: StepState.indexed,
+      // state: StepState.disabled,
+      content:  Form(
+        key: formKeys[0],
+        child: Column(
           children: <Widget>[
             TextFormField(
               decoration: InputDecoration(labelText: 'Age'),
               keyboardType: TextInputType.number,
               controller: _age,
+              // ignore: missing_return
+              validator: (String value) {
+                if (value.isEmpty || value.length < 1) {
+                  return 'Please enter age';
+                }
+                else if(int.parse(value)<0 || int.parse(value)>140){
+                  return "Please enter a valide age";
+
+                }
+              },
             ),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Height'),
+              decoration: InputDecoration(labelText: 'Height(cm)'),
+              validator: (String value) {
+                if (value.isEmpty || value.length < 1) {
+                  return 'Please enter height';
+                }
+                else if(int.parse(value)<52 || int.parse(value)>255){
+                  return "Please enter a valide height";
+
+                }
+              },
               keyboardType: TextInputType.number,
               controller: _height,
             ),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Weight'),
+              decoration: InputDecoration(labelText: 'Weight(kg)'),
               keyboardType: TextInputType.number,
+              validator: (String value) {
+                if (value.isEmpty || value.length < 1) {
+                  return 'Please enter weight';
+                }
+                else if(double.parse(value)<=1 || double.parse(value)>500){
+                  return "Please enter a valide weight";
+
+                }
+              },
               controller: _weight,
             ),
           ],
         ),
-        isActive: _currentStep >= 0,
+
+      ),
+        isActive: _currentStep >= 0
       ),
       Step(
         title: Text('Symptoms'),
-        content: Column(
+        state: StepState.indexed,
+      content:  Form(
+        key: formKeys[1],
+        child: Column(
 
             children: <Widget>[
               Row(
@@ -448,10 +512,10 @@ class _QuestionnaireState extends State<Questionnaire> {
                   ]),
             ]),
 
-        isActive: _currentStep >= 1,
       ),
+        isActive: _currentStep >= 1,
 
-    ];
+      ) ];
 
     return _steps;
   }
@@ -561,9 +625,10 @@ class _QuestionnaireState extends State<Questionnaire> {
       updateMalade(context);
       return showDialog<void>(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Warning'),
+            title: Icon(Icons.warning,color: Colors.red,size:30,),
             content: const Text('you should do test coronavirus'),
             actions: <Widget>[
               FlatButton(
@@ -578,7 +643,7 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                    MaterialPageRoute(builder: (context) => navigation2()),
                   );
                 },
               ),
@@ -590,9 +655,10 @@ class _QuestionnaireState extends State<Questionnaire> {
     else {
       return showDialog<void>(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Warning'),
+              title:  Icon(Icons.done_outline,color: Colors.green,size:30,),
               content: const Text('You are okay'),
               actions: <Widget>[
                 FlatButton(

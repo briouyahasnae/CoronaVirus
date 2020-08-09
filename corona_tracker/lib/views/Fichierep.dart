@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/classes/client.dart';
 import 'package:corona_tracker/main.dart';
+import 'package:corona_tracker/views/navigation2.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -48,7 +49,7 @@ class _FichierepState extends State<Fichierep> {
         }
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) =>Questionnaire()),
+          MaterialPageRoute(builder: (context) =>navigation2()),
             ModalRoute.withName("home"),
         );
       });

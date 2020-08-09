@@ -12,130 +12,105 @@ import 'package:corona_tracker/views/Fichierep.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart' ;
 var email;
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-  /*await CountryCodes.init();*/
-
-  runApp(MyApp());
-}
 
 
+class navigation2 extends StatefulWidget {
 
-class MyApp extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home:SplashScreen(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  int currentIndex=0 ;
-
-  MyHomePage({Key key, this.title}) : super(key: key);
+  navigation2({Key key, this.title}) : super(key: key);
   final String title;
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _navigation2State createState() => _navigation2State();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-static Widget fichierQuest;
- DateTime backbuttonpressedTime;
+class _navigation2State extends State<navigation2> {
+  static Widget fichierQuest;
+  DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
 
-   static  Widget r;
-    static var fichie;
+  static  Widget r;
+  static var fichie;
   static String resultEmail;
 
-   //list widget for bottom navigation
+  //list widget for bottom navigation
 
- Future<void> deconnecter() async{
-   await storage.delete(key: "email").then((value) =>
-   Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => Login()
-   ),
-   ModalRoute.withName("login"))
-   );
+  Future<void> deconnecter() async{
+    await storage.delete(key: "email").then((value) =>
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Login()
+            ),
+            ModalRoute.withName("login"))
+    );
   }
- Future<String> getEmail() async{
-   return await storage.read(key: 'email');
-}
-static  Future<Widget> getRep1() async{
-try {
-final String email = resultEmail;
-var dn = Firestore.instance
-    .collection('users')
-    .getDocuments();
-dn.then((querySnapshot) {
-querySnapshot.documents.forEach((result) {
-if (result.data['email'] == email) {
-if (result.data['Reponse'] == true) {
-r = Fichierep();
-
-}
-else
-r = Questionnaire();
-}
-});
-});
-await Future<Widget>.delayed(const Duration(seconds: 2));
-return r;
-}
-   catch(e){
-     print(e);
-      }
-   }
- List<Widget> app =[
-   Home(),FutureBuilder<Widget>(
- future:getRep1(),
- builder: (BuildContext context, AsyncSnapshot snapshot){
-
- switch (snapshot.connectionState) {
- case ConnectionState.active:
- case ConnectionState.waiting:
- return Center(
- child:Text("Loading..."));
- default :
- if (snapshot.hasError)
- return Text('Error: ${snapshot.error}');
- else {
- if(snapshot.hasData) {
- return snapshot.data;
- }
- }
- break;
-
- }
- return null;
- }) ,
-   Maps()
- ];
-
-String title;
-String getName(int index){
-  if(index==0 || index==2){
-    title= app[index].toString();
+  Future<String> getEmail() async{
+    return await storage.read(key: 'email');
   }
-  else{
-    title="Test covid-19";
-  }
-  return title;
+  static  Future<Widget> getRep1() async{
+    try {
+      final String email = resultEmail;
+      var dn = Firestore.instance
+          .collection('users')
+          .getDocuments();
+      dn.then((querySnapshot) {
+        querySnapshot.documents.forEach((result) {
+          if (result.data['email'] == email) {
+            if (result.data['Reponse'] == true) {
+              r = Fichierep();
 
-}
-   Future<String> readSession() async{
-     String  value = await storage.read(key: "email");
-       return value;
-   }
+            }
+            else
+              r = Questionnaire();
+          }
+        });
+      });
+      await Future<Widget>.delayed(const Duration(seconds: 2));
+      return r;
+    }
+    catch(e){
+      print(e);
+    }
+  }
+  List<Widget> app =[
+    Home(),FutureBuilder<Widget>(
+        future:getRep1(),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+            case ConnectionState.waiting:
+              return Center(
+                  child:Text("Loading..."));
+            default :
+              if (snapshot.hasError)
+                return Text('Error: ${snapshot.error}');
+              else {
+                if(snapshot.hasData) {
+                  return snapshot.data;
+                }
+              }
+              break;
+
+          }
+          return null;
+        }) ,
+    Maps()
+  ];
+
+  String title;
+  String getName(int index){
+    if(index==0 || index==2){
+      title= app[index].toString();
+    }
+    else{
+      title="Test covid-19";
+    }
+    return title;
+
+  }
+  Future<String> readSession() async{
+    String  value = await storage.read(key: "email");
+    return value;
+  }
   Future<bool> onWillPop() async {
     DateTime currentTime = DateTime.now();
     //Statement 1 Or statement2
@@ -151,30 +126,30 @@ String getName(int index){
     }
     return true;
   }
-String valueNew;
-@override
-void initState() {
+  String valueNew;
+  @override
+  void initState() {
     // TODO: implement initState
     super.initState();
     FutureBuilder(
-      future:readSession(),
+        future:readSession(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
-             case ConnectionState.waiting:
-               return Center(
-                child:Text("Loading..."));
-               default :
-                 if (snapshot.hasError)
-                         return Text('Error: ${snapshot.error}');
-                 else {
-                   if (snapshot.hasData) {
-                     setState(() {
-                       valueNew = snapshot.data;
-                     });
-                   }
-                   return null;
-                 }}}
+            case ConnectionState.waiting:
+              return Center(
+                  child:Text("Loading..."));
+            default :
+              if (snapshot.hasError)
+                return Text('Error: ${snapshot.error}');
+              else {
+                if (snapshot.hasData) {
+                  setState(() {
+                    valueNew = snapshot.data;
+                  });
+                }
+                return null;
+              }}}
     );
     getEmail().then(( value) =>
         setState(() {
@@ -183,14 +158,14 @@ void initState() {
         })).then((value) =>getRep1().then((Widget value) => fichierQuest=value));
   }
 
- GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
-int currentIndex=0;
+  GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
+  int currentIndex=1;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
 
-        onWillPop: onWillPop,
-        child: Scaffold(
+      onWillPop: onWillPop,
+      child: Scaffold(
         appBar: AppBar(
           title: Text(getName(currentIndex)),
           actions: <Widget>[
@@ -208,7 +183,7 @@ int currentIndex=0;
           automaticallyImplyLeading: false,
         ),
 
-         body:app[currentIndex],
+        body:app[currentIndex],
 
 
         bottomNavigationBar: BottomNavyBar(
@@ -246,7 +221,7 @@ int currentIndex=0;
 
         ),
 
-        ),
+      ),
 
     );
 
