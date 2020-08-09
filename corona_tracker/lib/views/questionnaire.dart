@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:corona_tracker/views/notificationView.dart';
 import 'package:corona_tracker/main.dart';
 class Questionnaire extends StatefulWidget {
   @override
@@ -98,7 +99,7 @@ final storage =new FlutterSecureStorage();
     await flutterLocalNotificationsPlugin.show(
         0, 'result test', 'you should do corona test', platformChannelSpecifics,
         payload: 'item x');
-    print('hi');
+
   }
   Future<void> _initNotifications() async{
 
@@ -111,8 +112,12 @@ final storage =new FlutterSecureStorage();
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        // ignore: missing_return
         onSelectNotification: (string) {
-          print("selected notification");
+           Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Shownotification()),
+          );
         });
 
   }
@@ -131,6 +136,7 @@ final storage =new FlutterSecureStorage();
   }
   @override
   Widget build(BuildContext context) {
+
    var height= MediaQuery
         .of(context)
         .size

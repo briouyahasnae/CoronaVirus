@@ -10,10 +10,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart';
+import 'package:flutter/services.dart' ;
 var email;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   /*await CountryCodes.init();*/
 
   runApp(MyApp());
@@ -36,11 +39,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
+  int currentIndex ;
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  int currentIndex = 0;
-
   final String title;
 
   @override
@@ -48,45 +48,46 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
- static var fichierQuest;
   DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
 
    static  Widget r;
-
-   static Widget t;
+    static var fichie;
   static String resultEmail;
 
    //list widget for bottom navigation
 
   List<Widget> app =[
-    Home(),FutureBuilder(
-
-      future:getRep1(),
-      builder: (BuildContext context,AsyncSnapshot<Widget> snapshot){
-
-   switch (snapshot.connectionState) {
-   case ConnectionState.active:
-   case ConnectionState.waiting:
-   return Center(
-   child:Text("Loading..."));
-   default :
-   if (snapshot.hasError)
-   return Text('Error: ${snapshot.error}');
-   else {
-   if(snapshot.hasData) {
-   return snapshot.data;
-   }
-   }
-   break;
-
-   }
-      return null;
-      }),
+    Home(),getPage(),
   Maps()
   ];
 
+static Widget getPage(){
+ return FutureBuilder(
 
+      future:getRep1(),
+      builder: (BuildContext context,AsyncSnapshot snapshot){
+
+        switch (snapshot.connectionState) {
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(
+                child:Text("Loading..."));
+          default :
+            if (snapshot.hasError)
+              return Text('Error: ${snapshot.error}');
+            else {
+              if(snapshot.hasData) {
+
+                return snapshot.data;
+              }
+            }
+            break;
+
+        }
+        return null;
+      });
+}
  Future<void> deconnecter() async{
    await storage.delete(key: "email").then((value) =>
    Navigator.pushAndRemoveUntil(
@@ -99,30 +100,30 @@ class _MyHomePageState extends State<MyHomePage> {
  Future<String> getEmail() async{
    return await storage.read(key: 'email');
 }
-   static Future<Widget> getRep1() async{
-     final String  email  = resultEmail;
-     var dn= Firestore.instance
-
+  static  Future getRep1() async{
+   try {
+     final String email = resultEmail;
+     var dn = Firestore.instance
          .collection('users')
          .getDocuments();
-   dn.then((querySnapshot) {
+     dn.then((querySnapshot) {
        querySnapshot.documents.forEach((result) {
-
          if (result.data['email'] == email) {
-           if(result.data['Reponse']==true) {
-
-            r=Fichierep();
-           }
-             else
-             r=Questionnaire();
+           if (result.data['Reponse'] == true) {
+               r = Fichierep();
 
            }
+           else
+               r = Questionnaire();
+         }
        });
-    });
-   await Future<Widget>.delayed(const Duration(seconds: 2));
-return r;
+     });
 
-
+     await Future<Widget>.delayed(const Duration(seconds: 2));
+   }
+   catch(e){
+     print(e);
+      }
    }
    Future<String> readSession() async{
      String  value = await storage.read(key: "email");
@@ -148,7 +149,6 @@ String valueNew;
 void initState() {
     // TODO: implement initState
     super.initState();
-
     FutureBuilder(
       future:readSession(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -166,25 +166,25 @@ void initState() {
                        valueNew = snapshot.data;
                      });
                    }
-
                    return null;
                  }}}
     );
-
     getEmail().then((value) =>
         setState(() {
           resultEmail=value;
 
         })
-  ).then((value) =>
 
-   fichierQuest= getRep1());
+  ).then((value) =>
+   getRep1());
+    fichie=getEmail().then((value) => getRep1());
   }
-   int currentIndex = 0;
+int currentIndex=0;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: onWillPop,   // Empty Function.
+
+        onWillPop: onWillPop,
         child: Scaffold(
         appBar: AppBar(
           title: Text(app[currentIndex].toString()),

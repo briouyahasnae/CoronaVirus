@@ -8,6 +8,7 @@ import 'package:flag/flag.dart';
 import 'package:corona_tracker/classes/Ip_info.dart';
 
 class Home extends StatefulWidget {
+  int index;
 
   @override
   _HomeState createState() => _HomeState();
