@@ -10,6 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:custom_navigator/custom_navigator.dart';
 import 'package:http/http.dart';
 var email;
 void main() async {
@@ -36,19 +37,21 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  int currentIndex=0 ;
 
-  MyHomePage({Key key, this.title}) : super(key: key);
 
-  int currentIndex = 0;
 
-  final String title;
+
+
+
+
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
- static var fichierQuest;
+ static Widget fichierQuest;
   DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
 
@@ -60,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
    //list widget for bottom navigation
 
   List<Widget> app =[
-    Home(),FutureBuilder(
+    Home(),fichierQuest=FutureBuilder(
 
       future:getRep1(),
       builder: (BuildContext context,AsyncSnapshot<Widget> snapshot){
@@ -120,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
        });
     });
    await Future<Widget>.delayed(const Duration(seconds: 2));
-return r;
+   return r;
 
 
    }
@@ -178,10 +181,11 @@ void initState() {
         })
   ).then((value) =>
 
-   fichierQuest= getRep1());
+   getRep1().then((value) =>  fichierQuest));
   }
-   int currentIndex = 0;
-  @override
+ int currentIndex = 0;
+ GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
+ @override
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: onWillPop,   // Empty Function.
@@ -202,17 +206,17 @@ void initState() {
           ],
           automaticallyImplyLeading: false,
         ),
-        body: app[currentIndex],
+
+         body:app[currentIndex],
+
 
         bottomNavigationBar: BottomNavyBar(
+          key: navBarGlobalKey,
           selectedIndex: currentIndex,
           showElevation: true,
           itemCornerRadius: 8,
           curve: Curves.easeInBack,
-          onItemSelected: (index) =>
-              setState(() {
-                currentIndex = index;
-              }),
+
           items: [
             BottomNavyBarItem(
               icon: Icon(Icons.home),
@@ -235,9 +239,41 @@ void initState() {
               textAlign: TextAlign.center,
             ),
           ],
+          onItemSelected: (index) =>
+              setState(() {
+                currentIndex = index;
+              }),
         ),
-        ));
+
+        ),
+
+    );
 
   }
+ Map<String, WidgetBuilder> _routeBuilders(BuildContext context, int index) {
+   return{
+     '/':(context){
+       return[
+         MyHomePage(),
+         fichierQuest ,
+         Maps(),
+       ].elementAt(index);
+     }
+   };
+ }
+ Widget _buildOffstageNavigator(int index) {
+   var routeBuilders = _routeBuilders(context, index);
+
+   return Offstage(
+     offstage: currentIndex != index,
+     child: Navigator(
+       onGenerateRoute: (routeSettings) {
+         return MaterialPageRoute(
+           builder: (context) => routeBuilders[routeSettings.name](context),
+         );
+       },
+     ),
+   );
+ }
 }
 
