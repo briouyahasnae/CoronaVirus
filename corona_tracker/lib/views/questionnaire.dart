@@ -104,7 +104,6 @@ class _QuestionnaireState extends State<Questionnaire> {
     await flutterLocalNotificationsPlugin.show(
         0, 'result test', 'you should do corona test', platformChannelSpecifics,
         payload: 'item x');
-
   }
 
   Future<void> _initNotifications() async {
@@ -120,7 +119,7 @@ class _QuestionnaireState extends State<Questionnaire> {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         // ignore: missing_return
         onSelectNotification: (string) {
-           Navigator.push(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Shownotification()),
           );
@@ -143,12 +142,11 @@ class _QuestionnaireState extends State<Questionnaire> {
 
   @override
   Widget build(BuildContext context) {
-
-   var height= MediaQuery
+    var height = MediaQuery
         .of(context)
         .size
         .height;
-   var width=MediaQuery
+    var width = MediaQuery
         .of(context)
         .size
         .width;
@@ -161,174 +159,102 @@ class _QuestionnaireState extends State<Questionnaire> {
                 .of(context)
                 .size
                 .height,
-            width:MediaQuery.of(context).size.width,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
             child: SafeArea(
-              child: Stepper(
-                steps: _mySteps(),
+                child: Stepper(
+                  steps: _mySteps(),
 
-                currentStep: this._currentStep,
-                onStepTapped: (step) {
+                  currentStep: this._currentStep,
+                  onStepTapped: (step) {
+                    pasStep(step);
+                  },
 
-                  pasStep(step);
-
-                },
-
-                onStepContinue: () {
-                  setState(() {
-                    if (this._currentStep >= 0 && !(this._currentStep>=1)) {
-                      print("age ${_age.text}");
-                      if(_age.text !='' && _weight.text !='' && _height.text!='' ){
-                        this._currentStep = this._currentStep + 1;
+                  onStepContinue: () {
+                    setState(() {
+                      if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
+                        print("age ${_age.text}");
+                        if (_age.text != '' && _weight.text != '' &&
+                            _height.text != '') {
+                          this._currentStep = this._currentStep + 1;
+                        }
                       }
-
-                    }
-                    else if(this._currentStep>=1) {
-                      //Logic to check if everything is completed
-                      if (selectedRadio != null && selectedRadio1 != null &&
-                          selectedRadio2 != null && selectedRadio3 != null &&
-                          selectedRadio4 != null) {
-                        Response(context);
-                        validateAnswers(context);
-
+                      else if (this._currentStep >= 1) {
+                        //Logic to check if everything is completed
+                        if (selectedRadio != null && selectedRadio1 != null &&
+                            selectedRadio2 != null && selectedRadio3 != null &&
+                            selectedRadio4 != null) {
+                          Response(context);
+                          validateAnswers(context);
+                        }
                       }
-                    }
-                  });
-                },
+                    });
+                  },
 
-                onStepCancel: () {
-                  setState(() {
-                    if (this._currentStep > 0) {
-                      this._currentStep = this._currentStep - 1;
-                    } else {
-                      this._currentStep = 0;
-                    }
-                  });
-                },
-                controlsBuilder: (BuildContext context, {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        _currentStep == 4 // this is the last step
-                            ?
-                    ButtonTheme(
-                        minWidth: width/10,
-                        height: height/10,
-                        child:RaisedButton.icon(
-                          icon: Icon(Icons.create),
-                          label: Text('CREATE'),
-                          color: Colors.green,
-                          onPressed: (){},
+                  onStepCancel: () {
+                    setState(() {
+                      if (this._currentStep > 0) {
+                        this._currentStep = this._currentStep - 1;
+                      } else {
+                        this._currentStep = 0;
+                      }
+                    });
+                  },
+                  controlsBuilder: (BuildContext context,
+                      {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          _currentStep == 4 // this is the last step
+                              ?
+                          ButtonTheme(
+                              minWidth: width / 10,
+                              height: height / 10,
+                              child: RaisedButton.icon(
+                                icon: Icon(Icons.create),
+                                label: Text('CREATE'),
+                                color: Colors.green,
+                                onPressed: () {},
 
-                        ))
-                            :
-                            Flexible(
+                              ))
+                              :
+                          Flexible(
 
-                    child:ButtonTheme(
-                    height: height/15,
-                    child:RaisedButton.icon(
-                          icon: Icon(Icons.navigate_next),
-                          onPressed: onStepContinue,
-                          label:Flexible(child: Text('CONTINUE',style: TextStyle(fontSize: 11))),
-                          color: Colors.pink,
-                        ))),
-                  Flexible(
-                 child: ButtonTheme(
-                  height: height/15,
-                  child:
-                        FlatButton.icon(
-                          icon: Icon(Icons.delete_forever),
-                          label: Text('CANCEL',style: TextStyle(fontSize: 11),),
-                          onPressed: onStepCancel,
-                        )
-                  ) )],
-                    ),
-                  );
-                },
-
-
-                    onStepContinue: () {
-                      setState(() {
-                        if (this._currentStep >= 0 &&
-                            !(this._currentStep >= 1)) {
-                          print("age ${_age.text}");
-                          if (_age.text != '' && _weight.text != '' &&
-                              _height.text != '') {
-                            this._currentStep = this._currentStep + 1;
-                          }
-                        }
-                        else if (this._currentStep >= 1) {
-                          //Logic to check if everything is completed
-                          if (selectedRadio != null && selectedRadio1 != null &&
-                              selectedRadio2 != null &&
-                              selectedRadio3 != null &&
-                              selectedRadio4 != null) {
-                            Response(context);
-                            validateAnswers(context);
-                          }
-                        }
-                      });
-                    },
-
-                    onStepCancel: () {
-                      setState(() {
-                        if (this._currentStep > 0) {
-                          this._currentStep = this._currentStep - 1;
-                        } else {
-                          this._currentStep = 0;
-                        }
-                      });
-                    },
-                    controlsBuilder: (BuildContext context,
-                        {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            _currentStep == 4 // this is the last step
-                                ?
-                            RaisedButton.icon(
-                              icon: Icon(Icons.create),
-                              label: Text('CREATE'),
-                              color: Colors.green,
-                            )
-                                : RaisedButton.icon(
-                              icon: Icon(Icons.navigate_next),
-                              onPressed: onStepContinue,
-                              label: Text('CONTINUE'),
-                              color: Colors.pink,
-                            ),
-                            FlatButton.icon(
-                              icon: Icon(Icons.delete_forever),
-                              label: const Text('CANCEL'),
-                              onPressed: onStepCancel,
-                            )
-                          ],
-                        ),
-                      );
-                    },
+                              child: ButtonTheme(
+                                  height: height / 15,
+                                  child: RaisedButton.icon(
+                                    icon: Icon(Icons.navigate_next),
+                                    onPressed: onStepContinue,
+                                    label: Flexible(child: Text('CONTINUE',
+                                        style: TextStyle(fontSize: 11))),
+                                    color: Colors.pink,
+                                  ))),
+                          Flexible(
+                              child: ButtonTheme(
+                                  height: height / 15,
+                                  child:
+                                  FlatButton.icon(
+                                    icon: Icon(Icons.delete_forever),
+                                    label: Text('CANCEL',
+                                      style: TextStyle(fontSize: 11),),
+                                    onPressed: onStepCancel,
+                                  )
+                              ))
+                        ],
+                      ),
+                    );
+                  },
 
 
-                  ));
-              if (constraints.maxWidth > 400) {
-                ListView.builder
-                  (
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      //return _mySteps().add(value)
-                }
-                );
-              } else {
-                return _smallDisplay();
-              }
-            }));
+                ))));
   }
 
 
   List<Step> _mySteps() {
-
     List<Step> _steps = [
 
       Step(
@@ -359,26 +285,26 @@ class _QuestionnaireState extends State<Questionnaire> {
         content: Column(
 
             children: <Widget>[
-             Row(
+              Row(
                   children: <Widget>[
                     Flexible(
-                    child:Text(
-                      'new or worsening cough',
-                      style: TextStyle(
-                          fontSize: 13.0, fontWeight: FontWeight.bold),
+                      child: Text(
+                        'new or worsening cough',
+                        style: TextStyle(
+                            fontSize: 13.0, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    ),
-      Flexible(
-          child:Radio(
-                      value: "yes",
-                      groupValue: selectedRadio1,
-                      activeColor: Colors.green,
-                      onChanged: (val1) {
-                        print("Radio $val1");
-                        setSelectedRadio1(val1);
-                      },
-                    )),
-                  Text('Yes'),
+                    Flexible(
+                        child: Radio(
+                          value: "yes",
+                          groupValue: selectedRadio1,
+                          activeColor: Colors.green,
+                          onChanged: (val1) {
+                            print("Radio $val1");
+                            setSelectedRadio1(val1);
+                          },
+                        )),
+                    Text('Yes'),
                     Radio(
                       value: "no",
                       groupValue: selectedRadio1,
@@ -390,28 +316,28 @@ class _QuestionnaireState extends State<Questionnaire> {
                     ),
                     Text('No'),
                   ]),
-              SizedBox(height:10),
+              SizedBox(height: 10),
               Row(
 
                   children: <Widget>[
                     Flexible(
-                  child:  Text(
-                      'difficulty breathing',
-                      style: TextStyle(
-                          fontSize: 13.0, fontWeight: FontWeight.bold),
+                      child: Text(
+                        'difficulty breathing',
+                        style: TextStyle(
+                            fontSize: 13.0, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    ),
-                   Flexible(
-                   child:  Radio(
-                      value: "yes",
-                      groupValue: selectedRadio,
-                      activeColor: Colors.green,
-                      onChanged: (val) {
-                        print("Radio $val");
-                        setSelectedRadio(val);
-                      },
-                    )),
-                   Text('Yes'),
+                    Flexible(
+                        child: Radio(
+                          value: "yes",
+                          groupValue: selectedRadio,
+                          activeColor: Colors.green,
+                          onChanged: (val) {
+                            print("Radio $val");
+                            setSelectedRadio(val);
+                          },
+                        )),
+                    Text('Yes'),
                     Radio(
                       value: "no",
                       groupValue: selectedRadio,
@@ -424,29 +350,29 @@ class _QuestionnaireState extends State<Questionnaire> {
                     Text('No'),
 
                   ]),
-              SizedBox(height:10),
+              SizedBox(height: 10),
 
               Row(
 
                   children: <Widget>[
                     Flexible(
-                    child:Text(
-                      'new loss of smell or taste',
-                      style: TextStyle(
-                          fontSize: 13.0, fontWeight: FontWeight.bold),
-                    )),
+                        child: Text(
+                          'new loss of smell or taste',
+                          style: TextStyle(
+                              fontSize: 13.0, fontWeight: FontWeight.bold),
+                        )),
 
-    Flexible(
-    child: Radio(
-                      value: "yes",
-                      groupValue: selectedRadio2,
-                      activeColor: Colors.green,
-                      onChanged: (val) {
-                        print("Radio $val");
-                        setSelectedRadio2(val);
-                      },
-                    )),
-                   Text('Yes'),
+                    Flexible(
+                        child: Radio(
+                          value: "yes",
+                          groupValue: selectedRadio2,
+                          activeColor: Colors.green,
+                          onChanged: (val) {
+                            print("Radio $val");
+                            setSelectedRadio2(val);
+                          },
+                        )),
+                    Text('Yes'),
                     Radio(
                       value: "no",
                       groupValue: selectedRadio2,
@@ -458,26 +384,26 @@ class _QuestionnaireState extends State<Questionnaire> {
                     ),
                     Text('No'),
                   ]),
-              SizedBox(height:10),
+              SizedBox(height: 10),
 
               Row(
                   children: <Widget>[
                     Flexible(
-                   child: Text(
-                      'fatigue or weakness',
-                      style: TextStyle(
-                          fontSize: 13.0, fontWeight: FontWeight.bold),
-                    )),
-                  Flexible(
-                    child:Radio(
-                      value: "yes",
-                      groupValue: selectedRadio3,
-                      activeColor: Colors.green,
-                      onChanged: (val) {
-                        print("Radio $val");
-                        setSelectedRadio3(val);
-                      },
-                    )),
+                        child: Text(
+                          'fatigue or weakness',
+                          style: TextStyle(
+                              fontSize: 13.0, fontWeight: FontWeight.bold),
+                        )),
+                    Flexible(
+                        child: Radio(
+                          value: "yes",
+                          groupValue: selectedRadio3,
+                          activeColor: Colors.green,
+                          onChanged: (val) {
+                            print("Radio $val");
+                            setSelectedRadio3(val);
+                          },
+                        )),
 
                     Text('Yes'),
                     Radio(
@@ -492,25 +418,25 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                     Text('No'),
                   ]),
-              SizedBox(height:10),
+              SizedBox(height: 10),
               Row(
                   children: <Widget>[
                     Flexible(
-                    child:Text('temperature +38°C',
-                      style: TextStyle(
-                          fontSize: 13.0, fontWeight: FontWeight.bold),
-                    )),
-    Flexible(
-    child:
-                    Radio(
-                      value: "yes",
-                      groupValue: selectedRadio4,
-                      activeColor: Colors.green,
-                      onChanged: (val) {
-                        print("Radio $val");
-                        setSelectedRadio4(val);
-                      },
-                    )),
+                        child: Text('temperature +38°C',
+                          style: TextStyle(
+                              fontSize: 13.0, fontWeight: FontWeight.bold),
+                        )),
+                    Flexible(
+                        child:
+                        Radio(
+                          value: "yes",
+                          groupValue: selectedRadio4,
+                          activeColor: Colors.green,
+                          onChanged: (val) {
+                            print("Radio $val");
+                            setSelectedRadio4(val);
+                          },
+                        )),
                     Text('Yes'),
                     Radio(
                       value: "no",
@@ -557,9 +483,8 @@ class _QuestionnaireState extends State<Questionnaire> {
     );
   }
 
-
   Future<void> Response(BuildContext context) async {
-    dynamic email = await storage.read(key :"email");
+    dynamic email = await storage.read(key: "email");
     print(email);
 
     var data = Firestore.instance
@@ -592,7 +517,8 @@ class _QuestionnaireState extends State<Questionnaire> {
       });
     });
   }
-  Future<void> updateMalade(BuildContext context) async{
+
+  Future<void> updateMalade(BuildContext context) async {
     dynamic email = await storage.read(key: "email");
 
     Firestore.instance
@@ -683,7 +609,7 @@ class _QuestionnaireState extends State<Questionnaire> {
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>MyHomePage()),
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
                     );
                   },
                 ),
@@ -693,4 +619,4 @@ class _QuestionnaireState extends State<Questionnaire> {
       );
     }
   }
-
+}
