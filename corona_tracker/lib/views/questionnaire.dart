@@ -1,14 +1,13 @@
-import 'package:corona_tracker/views/navigation2.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:corona_tracker/views/notificationView.dart';
+import 'package:corona_tracker/classes/Notif.dart';
 import 'package:corona_tracker/main.dart';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mailer2/mailer.dart';
 class Questionnaire extends StatefulWidget {
   @override
   _QuestionnaireState createState() => _QuestionnaireState();
@@ -17,6 +16,8 @@ class Questionnaire extends StatefulWidget {
 class _QuestionnaireState extends State<Questionnaire> {
   // omitted
   final MyHomePage homee=new MyHomePage();
+  final Notif notification=new Notif();
+
   GlobalKey<FormState> _formKey =  GlobalKey<FormState>();
   List<GlobalKey<FormState>> formKeys = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
   final storage = new FlutterSecureStorage();
@@ -98,64 +99,59 @@ class _QuestionnaireState extends State<Questionnaire> {
         this._currentStep = step;
       }
     });
-  }
 
-  void _onTapMalade() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'result test', 'you should do corona test', platformChannelSpecifics,
-        payload: 'item x');
   }
+dynamic sendEmail() async{
+  dynamic email = await storage.read(key: "email");
+  var options = new GmailSmtpOptions()
+    ..username = 'assmaesafae20@gmail.com'
+    ..password = 'marwaasmae06111998'; // Note: if you have Google's "app specific passwords" enabled,
+  // you need to use one of those here.
 
-  Future<void> _initNotifications() async {
-    var initializationSettingsAndroid = new AndroidInitializationSettings(
-        'logo');
-    print(initializationSettingsAndroid);
-    var initializationSettingsIOS = new IOSInitializationSettings(
-        onDidReceiveLocalNotification: (i, string1, string2, string3) {
-          print("received notifications");
-        });
-    var initializationSettings = new InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        // ignore: missing_return
-        onSelectNotification: (string) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Shownotification()),
-          );
-        });
-  }
+  // How you use and store passwords is up to you. Beware of storing passwords in plain.
+
+  // Create our email transport.
+  var emailTransport = new SmtpTransport(options);
+
+  // Create our mail/envelope.
+  var envelope = new Envelope()
+    ..from = 'assmaesafae20@gmail.com'
+    ..recipients.add(email.toString())
+    ..subject = 'Test covid 19'
+    ..text = 'You had better do test covid -19'
+    ..html = 'Your answers to covid-19 <br> age: ${_age.text} <br> weight : ${_weight.text} <br> height:${_height.text}<br> new or worsening cough:$selectedRadio <br> difficulty breathing:$selectedRadio1'+
+    '<br> new loss of smell or taste $selectedRadio2 <br> fatigue or weakness :$selectedRadio3 <br> temperature plus 38 :$selectedRadio4 <br> <strong> YOU HAD BETTER TO DO TEST COVID-19</strong>';
+
+  // Email it.
+  emailTransport.send(envelope)
+      .then((envelope) => print('Email sent!'))
+      .catchError((e) => print('Error occurred: $e'));
+}
+
 
   @override
   void initState() {
     print("Initialize 1");
-    _initNotifications();
-    super.initState();
+
     selectedRadio = null;
     selectedRadio1 = null;
     selectedRadio2 = null;
     selectedRadio3 = null;
     selectedRadio4 = null;
     _getCurrentLocation();
+    setState(() {
+      MyHomePage.currentIndex=1;
+    });
+    super.initState();
   }
 
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    var height = MediaQuery
-=======
 
 
    var height= MediaQuery
 
->>>>>>> hasnae-dev
         .of(context)
         .size
         .height;
@@ -177,108 +173,18 @@ class _QuestionnaireState extends State<Questionnaire> {
                 .size
                 .width,
             child: SafeArea(
-<<<<<<< HEAD
-                child: Stepper(
-                  steps: _mySteps(),
-
-                  currentStep: this._currentStep,
-                  onStepTapped: (step) {
-                    pasStep(step);
-                  },
-
-                  onStepContinue: () {
-                    setState(() {
-                      if (this._currentStep >= 0 && !(this._currentStep >= 1)) {
-                        print("age ${_age.text}");
-                        if (_age.text != '' && _weight.text != '' &&
-                            _height.text != '') {
-                          this._currentStep = this._currentStep + 1;
-                        }
-                      }
-                      else if (this._currentStep >= 1) {
-                        //Logic to check if everything is completed
-                        if (selectedRadio != null && selectedRadio1 != null &&
-                            selectedRadio2 != null && selectedRadio3 != null &&
-                            selectedRadio4 != null) {
-                          Response(context);
-                          validateAnswers(context);
-                        }
-                      }
-                    });
-                  },
-
-                  onStepCancel: () {
-                    setState(() {
-                      if (this._currentStep > 0) {
-                        this._currentStep = this._currentStep - 1;
-                      } else {
-                        this._currentStep = 0;
-                      }
-                    });
-                  },
-                  controlsBuilder: (BuildContext context,
-                      {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          _currentStep == 4 // this is the last step
-                              ?
-                          ButtonTheme(
-                              minWidth: width / 10,
-                              height: height / 10,
-                              child: RaisedButton.icon(
-                                icon: Icon(Icons.create),
-                                label: Text('CREATE'),
-                                color: Colors.green,
-                                onPressed: () {},
-
-                              ))
-                              :
-                          Flexible(
-
-                              child: ButtonTheme(
-                                  height: height / 15,
-                                  child: RaisedButton.icon(
-                                    icon: Icon(Icons.navigate_next),
-                                    onPressed: onStepContinue,
-                                    label: Flexible(child: Text('CONTINUE',
-                                        style: TextStyle(fontSize: 11))),
-                                    color: Colors.pink,
-                                  ))),
-                          Flexible(
-                              child: ButtonTheme(
-                                  height: height / 15,
-                                  child:
-                                  FlatButton.icon(
-                                    icon: Icon(Icons.delete_forever),
-                                    label: Text('CANCEL',
-                                      style: TextStyle(fontSize: 11),),
-                                    onPressed: onStepCancel,
-                                  )
-                              ))
-                        ],
-                      ),
-                    );
-                  },
-=======
                 child:  Form(
                   key: _formKey,
                   child:  ListView(
                       children: <Widget>[
                  Stepper(
                   steps: _mySteps(),
->>>>>>> hasnae-dev
 
                   currentStep: this._currentStep,
                   onStepTapped: (step) {
                     pasStep(step);
                   },
 
-<<<<<<< HEAD
-                ))));
-=======
                   onStepContinue: () {
                     setState(() {
                       if(formKeys[_currentStep].currentState.validate()){
@@ -301,9 +207,28 @@ class _QuestionnaireState extends State<Questionnaire> {
                             Response(context);
                             validateAnswers(context);
                           }
-                        }
-                      }});
+                          else{
+                           showDialog<void>(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Icon(Icons.warning,color: Colors.red,size:30,),
+                                      content: const Text('Please complete all questions'),
+                                      actions: <Widget>[
+                                  FlatButton(
+                                  child: Text('Ok'),
+                                  onPressed: (){
+                                    Navigator.of(context).pop();
+                                  }),]
+                                      );}
+                            );}
+    }
+    }
+                    });
                   },
+
+
 
                   onStepCancel: () {
                     setState(() {
@@ -368,7 +293,6 @@ class _QuestionnaireState extends State<Questionnaire> {
 
 
                 )])))));
->>>>>>> hasnae-dev
   }
 
 
@@ -638,12 +562,13 @@ class _QuestionnaireState extends State<Questionnaire> {
     );
   }
 
+
   Future<void> Response(BuildContext context) async {
+    var uid=await storage.read(key: "uid");
+
     dynamic email = await storage.read(key: "email");
     print(email);
-
     var data = Firestore.instance
-
         .collection('questionnaire')
         .getDocuments().then((querySnapshot) {
       firestoreInstance.collection("questionnaire").add(
@@ -656,40 +581,33 @@ class _QuestionnaireState extends State<Questionnaire> {
             "R3": selectedRadio2,
             "R4": selectedRadio3,
             "R5": selectedRadio4,
-            "email": email
+            "email": email,
+            'timestamp': DateTime.now().toUtc().millisecondsSinceEpoch
+
           });
     });
     var data1 = Firestore.instance
         .collection('users')
-        .getDocuments().then((querySnapshot) {
-      querySnapshot.documents.forEach((result) {
-        if (result.data['email'] == email) {
-          result.reference.updateData(<String, dynamic>{
-            "Reponse": true,
+        .document(uid).updateData(<String, dynamic>{
+      "Reponse": true,
 
-          });
-        };
-      });
     });
+
   }
 
   Future<void> updateMalade(BuildContext context) async {
+    var uid=await storage.read(key: "uid");
     dynamic email = await storage.read(key: "email");
 
     Firestore.instance
         .collection('users')
-        .getDocuments().then((querySnapshot) {
-      querySnapshot.documents.forEach((result) {
-        if (result.data['email'] == email) {
-          result.reference.updateData(<String, dynamic>{
-            "malade": true,
-            "x": _currentPosition.latitude,
-            "y": _currentPosition.longitude
-          });
-        }
-      });
+        .document(uid).updateData(<String, dynamic>{
+      "malade": true,
+      "x": _currentPosition.latitude,
+      "y": _currentPosition.longitude
     });
   }
+
 
 /* var data1 = Firestore.instance
         .collection('users')
@@ -714,7 +632,8 @@ class _QuestionnaireState extends State<Questionnaire> {
     }
     print(count);
     if (count >= 3) {
-      _onTapMalade();
+      notification.onTapMalade(context);
+      sendEmail();
       updateMalade(context);
       return showDialog<void>(
         context: context,
@@ -734,11 +653,14 @@ class _QuestionnaireState extends State<Questionnaire> {
                   selectedRadio4 = null;
 
 
-                  Navigator.push(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => navigation2()),
-                  );
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                    ModalRoute.withName("home")
+                  ).then((_) => notification.onTapMalade(context));
+
                 },
+
               ),
             ],
           );
@@ -763,9 +685,10 @@ class _QuestionnaireState extends State<Questionnaire> {
                     selectedRadio3 = null;
                     selectedRadio4 = null;
 
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => MyHomePage()),
+                      ModalRoute.withName("home")
                     );
                   },
                 ),
@@ -775,8 +698,4 @@ class _QuestionnaireState extends State<Questionnaire> {
       );
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> hasnae-dev

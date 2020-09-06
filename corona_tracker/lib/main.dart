@@ -1,8 +1,9 @@
+import 'package:corona_tracker/classes/Notif.dart';
 import 'package:corona_tracker/views/Login.dart';
 import 'package:corona_tracker/views/Maps.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
+import 'package:corona_tracker/views/notificationView.dart';
 import 'package:corona_tracker/views/bottom_navy_bar.dart';
 import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:corona_tracker/views/splashScreen.dart';
@@ -17,8 +18,6 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  /*await CountryCodes.init();*/
-
   runApp(MyApp());
 }
 
@@ -34,163 +33,151 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home:SplashScreen(),
+
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  int currentIndex=0 ;
+ static int currentIndex=0;
 
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-static Widget fichierQuest;
- DateTime backbuttonpressedTime;
+  static Widget fichierQuest;
+  DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
-
-   static  Widget r;
-    static var fichie;
+  static  Widget r;
+  static var fichie;
   static String resultEmail;
+Notif notiiiiif =new Notif();
+  static var uid;
+  //list widget for bottom navigation
 
-   //list widget for bottom navigation
-
- Future<void> deconnecter() async{
-   await storage.delete(key: "email").then((value) =>
-   Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => Login()
-   ),
-   ModalRoute.withName("login"))
-   );
+  Future<void> deconnecter() async{
+    await storage.deleteAll().then((value) =>
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Login()
+            ),
+            ModalRoute.withName("login"))
+    );
   }
- Future<String> getEmail() async{
-   return await storage.read(key: 'email');
-}
-static  Future<Widget> getRep1() async{
-try {
-final String email = resultEmail;
-var dn = Firestore.instance
-    .collection('users')
-    .getDocuments();
-dn.then((querySnapshot) {
-querySnapshot.documents.forEach((result) {
-if (result.data['email'] == email) {
-if (result.data['Reponse'] == true) {
-r = Fichierep();
-
-}
-else
-r = Questionnaire();
-}
-});
-});
-await Future<Widget>.delayed(const Duration(seconds: 2));
-return r;
-}
-   catch(e){
-     print(e);
-      }
-   }
- List<Widget> app =[
-   Home(),FutureBuilder<Widget>(
- future:getRep1(),
- builder: (BuildContext context, AsyncSnapshot snapshot){
-
- switch (snapshot.connectionState) {
- case ConnectionState.active:
- case ConnectionState.waiting:
- return Center(
- child:Text("Loading..."));
- default :
- if (snapshot.hasError)
- return Text('Error: ${snapshot.error}');
- else {
- if(snapshot.hasData) {
- return snapshot.data;
- }
- }
- break;
-
- }
- return null;
- }) ,
-   Maps()
- ];
-
-String title;
-String getName(int index){
-  if(index==0 || index==2){
-    title= app[index].toString();
+  Future<String> getEmail() async{
+    return await storage.read(key: 'uid');
   }
-  else{
-    title="Test covid-19";
-  }
-  return title;
-
-}
-   Future<String> readSession() async{
-     String  value = await storage.read(key: "email");
-       return value;
-   }
-  Future<bool> onWillPop() async {
-    DateTime currentTime = DateTime.now();
-    //Statement 1 Or statement2
-    bool backButton = backbuttonpressedTime == null ||
-        currentTime.difference(backbuttonpressedTime) > Duration(seconds: 3);
-    if (backButton) {
-      backbuttonpressedTime = currentTime;
-      Fluttertoast.showToast(
-          msg: "Double Click to exit app",
-          backgroundColor: Colors.black,
-          textColor: Colors.white);
-      return false;
+  static  Future<Widget> getRep1(String uid) async {
+    try {
+      Firestore.instance
+          .collection('users')
+          .document(uid).get().then((DocumentSnapshot snapshot) async {
+        if (snapshot.data["Reponse"] == true) {
+          r = Fichierep();
+        }
+        else
+          r = Questionnaire();
+      });
+      await Future<Widget>.delayed(const Duration(seconds: 2));
+      return r;
     }
-    return true;
+    catch (e) {
+      print(e);
+    }
   }
-String valueNew;
-@override
-void initState() {
+    List<Widget> app = [
+      Home(), FutureBuilder<Widget>(
+          future: getRep1(resultEmail),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Center(
+                    child: Text("Loading..."));
+              default :
+                if (snapshot.hasError)
+                  return Text('Error: ${snapshot.error}');
+                else {
+                  if (snapshot.hasData) {
+                    return snapshot.data;
+                  }
+                }
+                break;
+            }
+            return null;
+          }),
+      Shownotification(), Maps()
+    ];
+
+    String title;
+    String getName(int index) {
+      if (index == 0 || index == 3) {
+        title = app[index].toString();
+      }
+      else if (index == 2) {
+        title = "Notifications";
+      }
+      else {
+        title = "Test covid-19";
+      }
+      return title;
+    }
+
+    getMalade(uid){
+      var dn = Firestore.instance
+          .collection('users')
+          .document(uid).get().then((DocumentSnapshot snapshot) async {
+        return await storage.write(key: "malade", value: snapshot.data["malade"]);
+      });
+    }
+  Future<String> readSession() async{
+    String  value = await storage.read(key: "email");
+    return value;
+  }
+  String valueNew;
+  @override
+  void initState() {
     // TODO: implement initState
-    super.initState();
+
     FutureBuilder(
-      future:readSession(),
+        future:readSession(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
-             case ConnectionState.waiting:
-               return Center(
-                child:Text("Loading..."));
-               default :
-                 if (snapshot.hasError)
-                         return Text('Error: ${snapshot.error}');
-                 else {
-                   if (snapshot.hasData) {
-                     setState(() {
-                       valueNew = snapshot.data;
-                     });
-                   }
-                   return null;
-                 }}}
+            case ConnectionState.waiting:
+              return Center(
+                  child:Text("Loading..."));
+            default :
+              if (snapshot.hasError)
+                return Text('Error: ${snapshot.error}');
+              else {
+                if (snapshot.hasData) {
+                  setState(() {
+                    valueNew = snapshot.data;
+                  });
+                }
+                return null;
+              }}}
     );
     getEmail().then(( value) =>
         setState(() {
-          resultEmail=value;
-
-        })).then((value) =>getRep1().then((Widget value) => fichierQuest=value));
+          uid=value;
+          getRep1(value);
+          getMalade(value);
+        }));
+    notiiiiif.initNotifications(context);
+    super.initState();
   }
 
- GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
-int currentIndex=0;
+
+  GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
+  int currentIndex=MyHomePage.currentIndex;
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-
-        onWillPop: onWillPop,
-        child: Scaffold(
+    return Container(
+      child: Scaffold(
         appBar: AppBar(
           title: Text(getName(currentIndex)),
           actions: <Widget>[
@@ -208,7 +195,7 @@ int currentIndex=0;
           automaticallyImplyLeading: false,
         ),
 
-         body:app[currentIndex],
+        body:app[currentIndex],
 
 
         bottomNavigationBar: BottomNavyBar(
@@ -236,6 +223,14 @@ int currentIndex=0;
               activeColor: Colors.pink,
               textAlign: TextAlign.center,
             ),
+
+            BottomNavyBarItem(
+              icon: Icon(Icons.notification_important),
+              title:  Text("Notification"),
+              activeColor: Colors.deepOrange,
+              textAlign: TextAlign.center,
+            ),
+
             BottomNavyBarItem(
               icon: Icon(Icons.location_on),
               title: Text('Location'),
@@ -246,7 +241,7 @@ int currentIndex=0;
 
         ),
 
-        ),
+      ),
 
     );
 
@@ -254,4 +249,3 @@ int currentIndex=0;
 
 
 }
-

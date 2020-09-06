@@ -10,7 +10,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final storage = new FlutterSecureStorage();
-  final splashDelay =11;
+  final splashDelay =2;
   final backgroundColor=const Color(0xFFf4f4f6);
 
   @override

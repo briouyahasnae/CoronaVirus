@@ -1,3 +1,5 @@
+import 'package:corona_tracker/views/ForgetPassword.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/signup.dart';
@@ -20,63 +22,79 @@ class _LoginState extends State<Login> {
  final _formKey = GlobalKey<FormState>();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _email = TextEditingController();
+ FirebaseAuth _auth=FirebaseAuth.instance;
   Future<void> setSession() async{
       await storage.write(key: "email", value: _email.text.trimRight());
   }
-  void validate(BuildContext context)  {
-   int count = 0;
-   if (_formKey.currentState.validate()) {
+ void validate(BuildContext context) async {
+  if (_formKey.currentState.validate()) {
+   setState(() {
+    visible = true;
+   });
+   var _authenticatedUser = await _auth.signInWithEmailAndPassword(
+       email: _email.text.trimRight(),
+       password: _pass.text).catchError((err) =>
+
+       showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+         return AlertDialog(
+          title: Text('Warning'),
+          content: Text(err.message),
+          actions: <Widget>[
+           FlatButton(
+            child: Text('Ok'),
+            onPressed: () {
+             Navigator.of(context).pop();
+             setState(() {
+              visible = false;
+             });
+            },
+           ),
+          ],
+         );
+        },
+       ));
+   if (_authenticatedUser.uid != null) {
     setState(() {
-     visible=true;
+     visible = false;
     });
-       Firestore.instance
-        .collection('users')
-        .getDocuments().then((querySnapshot) async {
-     querySnapshot.documents.forEach((result) {
-      if (result.data['email'] == _email.text.trimRight() &&
-          result.data['password'] == Password.hash(_pass.text, new PBKDF2())
-              .toString()) {
-       count++;
-      }
-     });
-    switch(count){
-     case 0:
-      setState(() {
-       visible=false;
-      });
-      return showDialog<void>(
-       context: context,
-       builder: (BuildContext context) {
-        return AlertDialog(
-         title: Text('Warning'),
-         content: const Text('Verifie your email or password'),
-         actions: <Widget>[
-          FlatButton(
-           child: Text('Ok'),
-           onPressed: () {
-            Navigator.of(context).pop();
-           },
-          ),
-         ],
-        );
-       },
-      );
-     break;
-     default:
-      setState(() {
-        visible=false;
-      });
+    if (_authenticatedUser.isEmailVerified) {
      setSession();
-      Navigator.pushAndRemoveUntil(
-       context,
-       MaterialPageRoute(builder: (context) => MyHomePage()),
-       ModalRoute.withName("homePage"),
-      );
-      break;
-     }
-    });
+     await storage.write(key: "uid", value:_authenticatedUser.uid);
+     MyHomePage.currentIndex=0;
+     Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => MyHomePage()),
+      ModalRoute.withName("homePage"),
+     );
+    } else {
+     showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+       return AlertDialog(
+        title: Text('Warning'),
+        content: const Text('Please valid your account'),
+        actions: <Widget>[
+         FlatButton(
+          child: Text('Ok'),
+          onPressed: () {
+           Navigator.of(context).pop();
+           setState(() {
+            visible = false;
+           });
+          },
+         ),
+        ],
+       );
+      },
+     );
+    }
+   } else {
+
    }
   }
+ }
 
   String validateEmail(String value) {
    String pattern =
@@ -212,7 +230,30 @@ class _LoginState extends State<Login> {
     ),
 
 
-   )] ),
+   ),
+     SizedBox(
+      height: height/40,
+     ),
+     Center(
+      child : GestureDetector(
+       onTap: () {
+        Navigator.pushAndRemoveUntil(
+         context,
+         MaterialPageRoute(
+             builder: (context) => ForgetPass()),
+         ModalRoute.withName("ForgetPass"),
+        );
+       },
+       child: Text(
+        "Reset Password",
+        style: TextStyle(
+         decoration: TextDecoration.underline,
+         color: Colors.blue,
+        ),
+       ),
+      ),
+     )
+    ] ),
 
     ),
     ]),

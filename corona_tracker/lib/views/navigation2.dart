@@ -1,5 +1,6 @@
 import 'package:corona_tracker/views/Login.dart';
 import 'package:corona_tracker/views/Maps.dart';
+import 'package:corona_tracker/views/notificationView.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/Home.dart';
@@ -26,10 +27,10 @@ class _navigation2State extends State<navigation2> {
   static Widget fichierQuest;
   DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
-
+  static String resultEmail;
   static  Widget r;
   static var fichie;
-  static String resultEmail;
+
 
   //list widget for bottom navigation
 
@@ -45,15 +46,15 @@ class _navigation2State extends State<navigation2> {
   Future<String> getEmail() async{
     return await storage.read(key: 'email');
   }
-  static  Future<Widget> getRep1() async{
+  static  Future<Widget> getRep1(String resultEmail) async{
     try {
-      final String email = resultEmail;
       var dn = Firestore.instance
           .collection('users')
           .getDocuments();
       dn.then((querySnapshot) {
-        querySnapshot.documents.forEach((result) {
-          if (result.data['email'] == email) {
+        querySnapshot.documents.forEach((result) async {
+          if (result.data['email'] == resultEmail) {
+
             if (result.data['Reponse'] == true) {
               r = Fichierep();
 
@@ -70,30 +71,28 @@ class _navigation2State extends State<navigation2> {
       print(e);
     }
   }
-  List<Widget> app =[
-    Home(),FutureBuilder<Widget>(
-        future:getRep1(),
-        builder: (BuildContext context, AsyncSnapshot snapshot){
-
+  List<Widget> app = [
+    Home(), FutureBuilder<Widget>(
+        future: getRep1(resultEmail),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
             case ConnectionState.waiting:
               return Center(
-                  child:Text("Loading..."));
+                  child: Text("Loading..."));
             default :
               if (snapshot.hasError)
                 return Text('Error: ${snapshot.error}');
               else {
-                if(snapshot.hasData) {
+                if (snapshot.hasData) {
                   return snapshot.data;
                 }
               }
               break;
-
           }
           return null;
-        }) ,
-    Maps()
+        }),
+    Shownotification(), Maps()
   ];
 
   String title;
@@ -154,17 +153,16 @@ class _navigation2State extends State<navigation2> {
     getEmail().then(( value) =>
         setState(() {
           resultEmail=value;
+          getRep1(value);
 
-        })).then((value) =>getRep1().then((Widget value) => fichierQuest=value));
+        }));
   }
 
   GlobalKey navBarGlobalKey = GlobalKey(debugLabel: 'bottomAppBar');
-  int currentIndex=1;
+  int currentIndex=2;
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-
-      onWillPop: onWillPop,
+    return Container(
       child: Scaffold(
         appBar: AppBar(
           title: Text(getName(currentIndex)),
@@ -211,6 +209,14 @@ class _navigation2State extends State<navigation2> {
               activeColor: Colors.pink,
               textAlign: TextAlign.center,
             ),
+
+            BottomNavyBarItem(
+              icon: Icon(Icons.notification_important),
+              title:  Text("Notification"),
+              activeColor: Colors.deepOrange,
+              textAlign: TextAlign.center,
+            ),
+
             BottomNavyBarItem(
               icon: Icon(Icons.location_on),
               title: Text('Location'),
@@ -229,4 +235,3 @@ class _navigation2State extends State<navigation2> {
 
 
 }
-

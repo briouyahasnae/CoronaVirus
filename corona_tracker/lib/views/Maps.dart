@@ -70,13 +70,14 @@ class _Maps extends State<Maps> {
       _markers["Current Location"] = marker;
     });
     String value = await storage.read(key: "emai");
+    String uid = await storage.read(key: "uid");
+
     print(value);
     int count=0;
     Firestore.instance
-        .collection('users')
-        .getDocuments().then((querySnapshot) {
+        .collection("users").getDocuments().then((querySnapshot) {
       querySnapshot.documents.forEach((result) {
-        if (result.data['email'] != value) {
+        if (result.data != uid) {
           if (result.data['malade'] == true) {
             setState(() {
               Circle circle=   Circle( //radius marker
@@ -119,3 +120,4 @@ class _Maps extends State<Maps> {
     );
   }
 }
+

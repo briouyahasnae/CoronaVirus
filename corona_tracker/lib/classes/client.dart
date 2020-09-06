@@ -4,7 +4,7 @@ class Client {
    var documentReference;
   String age;
   String email,height,weight;
- String r1,r2,r3,r4,r5;
+ String r1,r2,r3,r4,r5,timestamp;
   Client.data(this.documentReference,
   [
      this.age,
@@ -16,6 +16,7 @@ class Client {
         this.r4,
         this.r5,
         this.email,
+    this.timestamp,
        ]) {
     this.age ??= '';
     this.height ??= '';
@@ -26,6 +27,7 @@ class Client {
     this.r4??= '';
     this.r5??= '';
     this.email ??= '';
+    this.timestamp??='';
 
   }
 
@@ -38,7 +40,8 @@ class Client {
     document.data['R3'].toString(),
     document.data['R4'].toString(),
     document.data['R5'].toString(),
-    document.data['email'].toString()
+    document.data['email'].toString(),
+    document.data['timestamp'].toString(),
   );
 
   Map<String, String> toMap() {
@@ -52,6 +55,7 @@ class Client {
       'r3': r3,
       'r4': r4,
       'r5': r5,
+      'timestamp':timestamp,
     };
   }
 

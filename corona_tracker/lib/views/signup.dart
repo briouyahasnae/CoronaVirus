@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corona_tracker/views/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -53,70 +54,68 @@ class _SignupState extends State<Signup> {
     return true;
   }
 
+  FirebaseAuth _firebaseAuth=FirebaseAuth.instance;
+
   Future<void> validate(BuildContext context) async {
     if (formKey.currentState.validate()) {
       setState(() {
         visible=true;
       });
-      int count = 0;
-      Firestore.instance
-          .collection('users')
-          .getDocuments()
-          // ignore: missing_return
-          .then((querySnapshot) {
-        querySnapshot.documents.forEach((result) {
-          if (result.data['email'] == _email.text.trimRight()) {
-            count++;
-          }
-        });
-        if (count == 0) {
-          firestoreInstance.collection("users").add({
-            "username": _username.text,
-            "email": _email.text.trimRight(),
-            "password": Password.hash(_pass.text, new PBKDF2()).toString(),
-            "Reponse":false,
-            "malade":false,
-            "x":null,
-            "y":null
-          }).then((_) {
-            setState(() {
-              visible=false;
-            });
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Login()),
-            );
-            return CircularProgressIndicator();
-
-          });
-        } else {
-          setState(() {
-            visible=false;
-          });
-          return showDialog<void>(
+      FirebaseUser user = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: _email.text.trimRight(),
+          password:_pass.text).catchError((err)=>
+          showDialog<void>(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Account exists'),
-                content: const Text(
-                    'There is an account with this email ,try to login'),
+                title: Text('Warning'),
+                content: Text(err.message),
                 actions: <Widget>[
                   FlatButton(
                     child: Text('Ok'),
                     onPressed: () {
                       Navigator.of(context).pop();
+                      setState(() {
+                        visible = false;
+                      });
                     },
                   ),
                 ],
               );
             },
+          ));
+      FirebaseUser userid = await _firebaseAuth.currentUser();
+
+      UserUpdateInfo updateInfo = UserUpdateInfo();
+      updateInfo.displayName = _username.text;
+      userid.updateProfile(updateInfo);
+      try {
+        await user.sendEmailVerification();
+        firestoreInstance.collection("users").document(userid.uid).setData({
+          "Reponse": false,
+          "malade": false,
+          "x": null,
+          "y": null
+        }).then((_) {
+          setState(() {
+            visible = false;
+          });
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
           );
-        }
-      });
+          return CircularProgressIndicator();
+        });
+        return user.uid;
+      } catch (e) {
+        print(
+            "An error occured while trying to send email        verification");
+        print(e.message);
+      }
     } else {
       return Text("form is invalid");
     }
-    return null;
   }
   String validateEmail(String value) {
     String pattern =

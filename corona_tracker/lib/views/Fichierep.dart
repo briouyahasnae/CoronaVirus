@@ -16,29 +16,26 @@ class Fichierep extends StatefulWidget {
 class _FichierepState extends State<Fichierep> {
   final storage = new FlutterSecureStorage();
   var _result;
+  var now=new DateTime.now().toUtc().millisecondsSinceEpoch;
   Future _future;
   double width;
   double height;
   var age;
-  var weight,tall,r1,r2,r3,r4,r5;
+  var weight,tall,r1,r2,r3,r4,r5,time;
   Future<dynamic> User;
   Client client;
+  final MyHomePage homee=new MyHomePage();
   // ignore: always_specify_types
   void repeat() async {
     final dynamic email = await storage.read(key: 'email');
+    var uid=await storage.read(key: "uid");
     Firestore.instance
         .collection('users')
-        .getDocuments().then((querySnapshot) {
-      querySnapshot.documents.forEach((DocumentSnapshot result) {
-        if (result.data['email'] == email) {
-          result.reference.updateData(<String, dynamic>{
-            "malade": false,
-            "Reponse": false,
-            "x": null,
-            "y": null
-          });
-        }
-      });
+        .document(uid).updateData(<String, dynamic>{
+      "malade": false,
+      "Reponse": false,
+      "x": null,
+      "y": null
     });
     Firestore.instance
         .collection('questionnaire')
@@ -47,18 +44,19 @@ class _FichierepState extends State<Fichierep> {
         if (result.data['email'] == email) {
           result.reference.delete();
         }
+        MyHomePage.currentIndex=1;
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) =>navigation2()),
-            ModalRoute.withName("home"),
+          MaterialPageRoute(builder: (context) =>MyHomePage()),
+          ModalRoute.withName("home"),
         );
       });
     });
   }
 
   Future<dynamic> getCurrentUser() async {
+    var email=await storage.read(key: "email");
     try {
-      final dynamic email = await storage.read(key: 'email');
       Firestore.instance
           .collection('questionnaire')
           .getDocuments().then((querySnapshot) {
@@ -75,6 +73,7 @@ class _FichierepState extends State<Fichierep> {
               r3=client.r3;
               r4=client.r4;
               r5=client.r5;
+              time=client.timestamp;
             });
           }
         });
@@ -376,6 +375,9 @@ class _FichierepState extends State<Fichierep> {
     // TODO: implement initState
     super.initState();
     _future=getCurrentUser();
+    setState(() {
+      MyHomePage.currentIndex=1;
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -390,11 +392,15 @@ class _FichierepState extends State<Fichierep> {
     return Scaffold(
 
       body: LayoutBuilder(builder: (context, constraints) {
+        if(now-int.parse(time as String)>15){
         if (constraints.maxWidth > 500) {
           return _bigDisplay();
         } else {
           return _smallDisplay();
         }
+      }
+      else{
+      repeat();}
       }),
     );
   }
