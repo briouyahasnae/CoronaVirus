@@ -565,13 +565,30 @@ dynamic sendEmail() async{
 
   Future<void> Response(BuildContext context) async {
     var uid=await storage.read(key: "uid");
-
     dynamic email = await storage.read(key: "email");
     print(email);
     var data = Firestore.instance
         .collection('questionnaire')
         .getDocuments().then((querySnapshot) {
       firestoreInstance.collection("questionnaire").add(
+          {
+            "Age": _age.text,
+            "Height": _height.text,
+            "Weight": _weight.text,
+            "R1": selectedRadio,
+            "R2": selectedRadio1,
+            "R3": selectedRadio2,
+            "R4": selectedRadio3,
+            "R5": selectedRadio4,
+            "email": email,
+            'timestamp': DateTime.now().toUtc().millisecondsSinceEpoch
+
+          });
+    });
+    var data2 = Firestore.instance
+        .collection('historiques')
+        .getDocuments().then((querySnapshot) {
+      firestoreInstance.collection("historiques").add(
           {
             "Age": _age.text,
             "Height": _height.text,

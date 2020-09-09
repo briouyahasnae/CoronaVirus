@@ -10,9 +10,9 @@ import 'package:corona_tracker/views/splashScreen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/views/Fichierep.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart' ;
 var email;
+var now=new DateTime.now();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -47,11 +47,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static Widget fichierQuest;
   DateTime backbuttonpressedTime;
   final storage = new FlutterSecureStorage();
   static  Widget r;
-  static var fichie;
   static String resultEmail;
 Notif notiiiiif =new Notif();
   static var uid;
@@ -69,8 +67,29 @@ Notif notiiiiif =new Notif();
   Future<String> getEmail() async{
     return await storage.read(key: 'uid');
   }
-  static  Future<Widget> getRep1(String uid) async {
-    try {
+  static  Future<Widget> getRep1(String uid,String email) async {
+
+    Firestore.instance
+        .collection('questionnaire')
+        .getDocuments().then((querySnapshot) {
+      querySnapshot.documents.forEach((DocumentSnapshot result) {
+        if (now.difference( DateTime.fromMillisecondsSinceEpoch(result.data['timestamp'])).inDays > 15) {
+          if(result.data['email'] == email ){
+            Firestore.instance
+                .collection('users')
+                .document(uid).updateData(<String, dynamic>{
+              "Reponse":false,
+              "malade": false,
+              "x":null,
+              "y": null
+            });
+            result.reference.delete();
+          }
+
+
+        }});
+    });
+        try {
       Firestore.instance
           .collection('users')
           .document(uid).get().then((DocumentSnapshot snapshot) async {
@@ -89,7 +108,7 @@ Notif notiiiiif =new Notif();
   }
     List<Widget> app = [
       Home(), FutureBuilder<Widget>(
-          future: getRep1(resultEmail),
+          future: getRep1(resultEmail,email),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.active:
@@ -133,40 +152,22 @@ Notif notiiiiif =new Notif();
       });
     }
   Future<String> readSession() async{
-    String  value = await storage.read(key: "email");
-    return value;
+    String  email = await storage.read(key: "email");
+    return email;
   }
   String valueNew;
   @override
   void initState() {
     // TODO: implement initState
 
-    FutureBuilder(
-        future:readSession(),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.active:
-            case ConnectionState.waiting:
-              return Center(
-                  child:Text("Loading..."));
-            default :
-              if (snapshot.hasError)
-                return Text('Error: ${snapshot.error}');
-              else {
-                if (snapshot.hasData) {
-                  setState(() {
-                    valueNew = snapshot.data;
-                  });
-                }
-                return null;
-              }}}
-    );
+    readSession().then((value1) =>
     getEmail().then(( value) =>
         setState(() {
           uid=value;
-          getRep1(value);
+          email=value1;
+          getRep1(value,value1);
           getMalade(value);
-        }));
+        })));
     notiiiiif.initNotifications(context);
     super.initState();
   }

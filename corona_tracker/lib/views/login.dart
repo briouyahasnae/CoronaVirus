@@ -237,11 +237,10 @@ class _LoginState extends State<Login> {
      Center(
       child : GestureDetector(
        onTap: () {
-        Navigator.pushAndRemoveUntil(
+        Navigator.push(
          context,
          MaterialPageRoute(
              builder: (context) => ForgetPass()),
-         ModalRoute.withName("ForgetPass"),
         );
        },
        child: Text(

@@ -1,10 +1,13 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Client {
    var documentReference;
   String age;
   String email,height,weight;
- String r1,r2,r3,r4,r5,timestamp;
+ String r1,r2,r3,r4,r5;
+  DateTime timestamp;
   Client.data(this.documentReference,
   [
      this.age,
@@ -27,7 +30,7 @@ class Client {
     this.r4??= '';
     this.r5??= '';
     this.email ??= '';
-    this.timestamp??='';
+    this.timestamp??=null;
 
   }
 
@@ -41,10 +44,10 @@ class Client {
     document.data['R4'].toString(),
     document.data['R5'].toString(),
     document.data['email'].toString(),
-    document.data['timestamp'].toString(),
+    DateTime.fromMillisecondsSinceEpoch(document.data['timestamp']),
   );
 
-  Map<String, String> toMap() {
+  Map<String, dynamic> toMap() {
     return {
       'age': age,
       'height': height,

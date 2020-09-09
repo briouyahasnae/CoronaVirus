@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corona_tracker/classes/client.dart';
 import 'package:corona_tracker/main.dart';
-import 'package:corona_tracker/views/navigation2.dart';
-import 'package:corona_tracker/views/questionnaire.dart';
 import 'package:flutter/material.dart';
+import 'package:corona_tracker/views/historic.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_session/flutter_session.dart';
 class Fichierep extends StatefulWidget {
   @override
   _FichierepState createState() => _FichierepState();
@@ -16,7 +14,7 @@ class Fichierep extends StatefulWidget {
 class _FichierepState extends State<Fichierep> {
   final storage = new FlutterSecureStorage();
   var _result;
-  var now=new DateTime.now().toUtc().millisecondsSinceEpoch;
+  var now=new DateTime.now();
   Future _future;
   double width;
   double height;
@@ -57,7 +55,7 @@ class _FichierepState extends State<Fichierep> {
   Future<dynamic> getCurrentUser() async {
     var email=await storage.read(key: "email");
     try {
-      Firestore.instance
+    return await  Firestore.instance
           .collection('questionnaire')
           .getDocuments().then((querySnapshot) {
         querySnapshot.documents.forEach((DocumentSnapshot result) {
@@ -88,7 +86,7 @@ class _FichierepState extends State<Fichierep> {
 
   Widget _bigDisplay() {
     return FutureBuilder<dynamic>(
-        future: _future,
+        future:_future,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
@@ -368,6 +366,20 @@ class _FichierepState extends State<Fichierep> {
                   label: Text("Repeat the test"))
 
             ]),
+        SizedBox(height: height / 10),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton.icon(onPressed: (){
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => historic()),
+    );
+    },
+                  icon: Icon(Icons.list),
+                  label: Text("view historic of respnse"))
+
+            ]),
       ],);
   }
   @override
@@ -392,7 +404,7 @@ class _FichierepState extends State<Fichierep> {
     return Scaffold(
 
       body: LayoutBuilder(builder: (context, constraints) {
-        if(now-int.parse(time as String)>15){
+        if(now.difference(time).inDays<15){
         if (constraints.maxWidth > 500) {
           return _bigDisplay();
         } else {
